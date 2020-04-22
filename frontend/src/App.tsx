@@ -1,14 +1,31 @@
 import React, { useState, useEffect, useCallback, MouseEvent } from "react";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Button from "react-bootstrap/Button";
-import ListGroup from "react-bootstrap/ListGroup";
-import ProgressBar from "react-bootstrap/ProgressBar";
-import Col from "react-bootstrap/Col";
-import Card from "react-bootstrap/Card";
+
+import { FlexGrid, FlexGridItem } from "baseui/flex-grid";
+import { BlockProps } from "baseui/block";
+
+import { Client as Styletron } from "styletron-engine-atomic";
+import { Provider as StyletronProvider } from "styletron-react";
+import { LightTheme, BaseProvider, styled } from "baseui";
+
 import * as superagent from "superagent";
 
 import { useDropzone } from "react-dropzone";
+import CustomLink from "./components/CustomLink";
+const itemProps: BlockProps = {
+    backgroundColor: "mono300",
+    height: "scale1000",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+};
+
+const engine = new Styletron();
+const Centered = styled("div", {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100%"
+});
 
 interface File {
     readonly name: string;
@@ -68,93 +85,36 @@ function App() {
         });
     }
     return (
-        <Container>
-            {error !== null ? (
-                <Row>
-                    <Col>
-                        <Card bg={"danger"} text="white">
-                            <Card.Body {...getRootProps()}>
-                                <Card.Title>Error</Card.Title>
-                                <Card.Text>{`${error}`}</Card.Text>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                </Row>
-            ) : null}
-            <Row>
-                <Col sm>
-                    <ListGroup>
-                        {uploads.map(file => {
-                            if ("name" in file) {
-                                return (
-                                    <ListGroup.Item>
-                                        <a
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            href={`http://localhost:5000/uploads/${file.name}`}
-                                        >
-                                            {file.name}
-                                        </a>
-                                    </ListGroup.Item>
-                                );
-                            } else {
-                                return null;
+        <StyletronProvider value={engine}>
+            <BaseProvider theme={LightTheme}>
+                <FlexGrid
+                    flexGridColumnCount={3}
+                    flexGridColumnGap="scale800"
+                    flexGridRowGap="scale800"
+                    marginBottom="scale800"
+                >
+                    <FlexGridItem
+                        {...itemProps}
+                        overrides={{
+                            Block: {
+                                style: ({ $theme }) => ({
+                                    width: `calc((200% - ${$theme.sizing.scale800}) / 3)`
+                                })
                             }
-                        })}
-                        <ListGroup.Item>{uploads.length} files</ListGroup.Item>
-                    </ListGroup>
-                </Col>
-                <Col sm>
-                    <Card>
-                        {files.length === 0 ? (
-                            <Card.Body {...getRootProps()}>
-                                <Card.Title>Upload Files</Card.Title>
-                                <input {...getInputProps()} />
-
-                                {isDragActive ? (
-                                    <Card.Text>
-                                        Drop the files here ...
-                                    </Card.Text>
-                                ) : (
-                                        <Card.Text>
-                                            Drag 'n' drop some files here, or click
-                                            to select files.
-                                        </Card.Text>
-                                    )}
-                            </Card.Body>
-                        ) : isUploading ? null : (
-                            <Card.Body>
-                                <h1>Ready to upload!</h1>
-                            </Card.Body>
-                        )}
-
-                        {files.length > 0 ? (
-                            <Card.Body>
-                                {isUploading ? (
-                                    <Card.Text>Uploading ...</Card.Text>
-                                ) : (
-                                        <Button onClick={doUpload}>
-                                            Upload {files.length} file(s)
-                                        </Button>
-                                    )}
-                            </Card.Body>
-                        ) : null}
-                    </Card>
-                </Col>
-                <Col sm></Col>
-            </Row>
-            {progress > 0 ? (
-                <Row>
-                    <Col sm></Col>
-                    <Col sm>
-                        <ProgressBar now={progress} label={`${progress}%`} />
-                    </Col>
-                    <Col sm></Col>
-                </Row>
-            ) : null}
-            <Button onClick={listFiles}>List Files</Button>
-        </Container>
+                        }}
+                    >
+                        <CustomLink />
+                    </FlexGridItem>
+                    <FlexGridItem display="none">
+                        This invisible one is needed so the margins line up
+					</FlexGridItem>
+                    <FlexGridItem {...itemProps}>Item</FlexGridItem>
+                    <FlexGridItem {...itemProps}>Item</FlexGridItem>
+                    <FlexGridItem {...itemProps}>Item</FlexGridItem>
+                    <FlexGridItem {...itemProps}>Item</FlexGridItem>
+                </FlexGrid>
+            </BaseProvider>
+        </StyletronProvider>
     );
 }
-
 export default App;
