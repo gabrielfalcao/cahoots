@@ -2,11 +2,7 @@ from flask import Flask
 from flask import jsonify
 from flask_cors import CORS
 from flask_session import Session
-
-from authlib.integrations.flask_client import OAuth
-
-from loginpass import create_flask_blueprint
-# from loginpass import Google
+from flask_oidc import OpenIDConnect
 
 from cahoots.filesystem import templates_path, static_path
 
@@ -22,38 +18,4 @@ application.config.from_object("cahoots.config")
 cors = CORS(application, resources="*")
 
 session_manager = Session(application)
-
-oauth = OAuth(application)
-
-
-def handle_authorize(remote, token, user_info):
-    print(user_info)
-    return jsonify(user_info)
-
-
-# google = create_flask_blueprint(Google, oauth, handle_authorize)
-# application.register_blueprint(google, url_prefix="/google")
-
-oauth2 = oauth.register(
-    "identity_provider",
-    client_id=application.config["OAUTH2_CLIENT_ID"],
-    client_secret=application.config["OAUTH2_CLIENT_SECRET"],
-    api_base_url=application.config["OAUTH2_BASE_URL"],
-    access_token_url=application.config["OAUTH2_ACCESS_TOKEN_URL"],
-    authorize_url=application.config["OAUTH2_AUTHORIZE_URL"],
-    client_kwargs={"scope": application.config["OAUTH2_CLIENT_SCOPE"]},
-)
-
-# oauth.register(
-#     name='github',
-#     client_id='{{ your-twitter-consumer-key }}',
-#     client_secret='{{ your-twitter-consumer-secret }}',
-#     request_token_url='https://api.twitter.com/oauth/request_token',
-#     request_token_params=None,
-#     access_token_url='https://api.twitter.com/oauth/access_token',
-#     access_token_params=None,
-#     authorize_url='https://api.twitter.com/oauth/authenticate',
-#     authorize_params=None,
-#     api_base_url='https://api.twitter.com/1.1/',
-#     client_kwargs=None,
-# )
+oidc = OpenIDConnect(application)
