@@ -17,10 +17,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - keycloak.fulltest.co
+    - cahoots.in
     secretName: keycloak-fulltest-co
   rules:
-  - host: keycloak.fulltest.co
+  - host: cahoots.in
     http:
       paths:
       - path: /

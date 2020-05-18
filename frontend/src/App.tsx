@@ -20,7 +20,7 @@ interface File {
 const FILE_SERVER_BASE_URL =
 	document.location.protocol === "http:"
 		? "https://localhost:5000"
-		: "https://keycloak.fulltest.co";
+		: "https://cahoots.in";
 
 function load_cache(): Array<File> {
 	const raw = window.localStorage.getItem("uploads");

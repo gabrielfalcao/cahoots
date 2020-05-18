@@ -4,7 +4,7 @@
 
 replicaCount: 1
 
-cahoots_url: "https://keycloak.fulltest.co/"
+cahoots_url: "https://cahoots.in/"
 # namespace: in-cahoots
 
 image:
@@ -59,7 +59,7 @@ ingress:
 oauth2:
   enabled: true
   domain: "id.t.newstore.net"
-  callback_url: "https://keycloak.fulltest.co/callback/oauth2"
+  callback_url: "https://cahoots.in/callback/oauth2"
   initial_token_id: "e761757f-5149-4f6c-971a-db4140806d6a"
   initial_token_registration: "eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI1NGFkYmJiZi0wMTY1LTQyODAtYWJkZi1lMzU4N2UyMjMzYTYifQ.eyJqdGkiOiJlNzYxNzU3Zi01MTQ5LTRmNmMtOTcxYS1kYjQxNDA4MDZkNmEiLCJleHAiOjAsIm5iZiI6MCwiaWF0IjoxNTg5MjUwNDg5LCJpc3MiOiJodHRwczovL2lkLnQubmV3c3RvcmUubmV0L2F1dGgvcmVhbG1zL2dhYnJpZWwtTkEtNDM5MjgiLCJhdWQiOiJodHRwczovL2lkLnQubmV3c3RvcmUubmV0L2F1dGgvcmVhbG1zL2dhYnJpZWwtTkEtNDM5MjgiLCJ0eXAiOiJJbml0aWFsQWNjZXNzVG9rZW4ifQ.jCdnGgI9vqSOU6awx16vVsnGj5w8bdlltUSwClTrzB8"
   # https://manage.auth0.com/dashboard/us/dev-newstore/applications/N6l4Wi2JmIh5gXiGj2sibsZiJRJu0jj1/settings
@@ -69,7 +69,7 @@ oauth2:
   access_token_url: "https://id.t.newstore.net/realms/gabriel-NA-43928/protocol/openid-connect/token"
   authorize_url: "https://id.t.newstore.net/realms/gabriel-NA-43928/protocol/openid-connect/auth"
   client_scope: "openid profile email roles role_list profile picture email_verified"
-  audience: "https://keycloak.fulltest.co"
+  audience: "https://cahoots.in"
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

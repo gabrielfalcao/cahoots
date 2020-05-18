@@ -32,7 +32,7 @@ GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 OAUTH2_DOMAIN = os.getenv("OAUTH2_DOMAIN") or "id.t.newstore.net"
 OAUTH2_CALLBACK_URL = (
     os.getenv("OAUTH2_CALLBACK_URL")
-    or "https://keycloak.fulltest.co/callback/oauth2"
+    or "https://cahoots.in/callback/oauth2"
 )
 
 # https://id.t.newstore.net/admin/master/console/#/realms/gabriel-NA-43928/clients/c75308f7-99e9-4b18-aeca-6e742a0b361d/credentials
@@ -51,7 +51,7 @@ OAUTH2_CLIENT_SCOPE = (
     or "openid profile email roles role_list profile picture email_verified http://newstore/flask-test http://newstore/newstore_id"
 )
 OAUTH2_CLIENT_AUDIENCE = (
-    os.getenv("OAUTH2_CLIENT_AUDIENCE") or "https://keycloak.fulltest.co/"
+    os.getenv("OAUTH2_CLIENT_AUDIENCE") or "https://cahoots.in/"
 )
 DOCKER_IMAGE = (
     os.getenv("DOCKER_IMAGE") or "latest"
