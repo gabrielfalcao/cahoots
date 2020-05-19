@@ -32,8 +32,10 @@ def login_oauth2():
     id_token = oidc.get_cookie_id_token()
     access_token = oidc.get_access_token() or {}
     user = db.get_user_and_token_from_userinfo(id_token, access_token)
-    return 'Welcome %s' % user
-
+    session['id_token'] = id_token
+    session['access_token'] = access_token
+    session['user'] = user.to_dict()
+    return redirect('/api/')
 
 
 # @application.route("/callback/oauth2")
