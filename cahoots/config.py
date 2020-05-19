@@ -16,7 +16,7 @@ if REDIS_HOST:
         host=REDIS_HOST or "localhost", port=int(os.getenv("REDIS_PORT") or 6379), db=0
     )
 else:
-    SESSION_TYPE = "null"
+    SESSION_TYPE = "filesystem"
     SESSION_FILE_DIR = "/tmp/"
     SESSION_FILE_THRESHOLD = 2
 
