@@ -6,9 +6,9 @@ export VENV		?= $(VENV_ROOT)
 export FLASK_DEBUG	:= 1
 export HTTPS_API	?= $(shell ps aux | grep ngrok | grep -v grep)
 
-export OAUTH2_ACCESS_TOKEN_URL	:= https://id.t.newstore.net/realms/gabriel-NA-43928/protocol/openid-connect/token
-export OAUTH2_AUTHORIZE_URL	:= https://id.t.newstore.net/realms/gabriel-NA-43928/protocol/openid-connect/auth
-export OAUTH2_BASE_URL		:= https://id.t.newstore.net/realms/gabriel-NA-43928/protocol/openid-connect/
+export OAUTH2_ACCESS_TOKEN_URL	:= https://id.t.newstore.net/auth/realms/gabriel-NA-43928/protocol/openid-connect/token
+export OAUTH2_AUTHORIZE_URL	:= https://id.t.newstore.net/auth/realms/gabriel-NA-43928/protocol/openid-connect/auth
+export OAUTH2_BASE_URL		:= https://id.t.newstore.net/auth/realms/gabriel-NA-43928/protocol/openid-connect/
 export OAUTH2_CALLBACK_URL	:= https://keycloak.fulltest.co/callback/oauth2
 export OAUTH2_CLIENT_ID		:= keycloak-fulltest-co-1
 export OAUTH2_CLIENT_SCOPE	:= openid profile email roles
@@ -170,7 +170,7 @@ setup-helm:
 
 
 tunnel:
-	ngrok http --subdomain=pron-f1l3-serv3r 5000
+	ngrok http --subdomain=keycloak-fulltestco 5000
 
 clean:
 	rm -rf .venv
