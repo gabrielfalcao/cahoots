@@ -52,14 +52,14 @@ def get_user_and_token_from_userinfo(
 
     user = User.get_or_create(email=email)
 
-    token = user.add_token(**token)
+    token = user.add_token(id_token=userinfo, access_token=token)
 
-    oauth2_id = userinfo.pop("sub", None)  # might be auth0-specific,
+    oidc_sub = userinfo.pop("sub", None)  # might be auth0-specific,
     # check for keycloak
-    if oauth2_id:
-        user.set(oauth2_id=oauth2_id)
+    if oidc_sub:
+        user.set(oidc_sub=oidc_sub)
 
-    for field in ("name", "picture"):
+    for field in ("first_name", "last_name", "profile_picture"):
         value = userinfo.pop(field, None)
         if value:
             user.set(**{field: value})

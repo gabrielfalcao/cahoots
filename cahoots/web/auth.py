@@ -5,7 +5,7 @@ import logging
 from flask import redirect, session, request, g, url_for
 
 # from cahoots.models import JWTToken
-# from . import db
+from . import db
 from .core import application
 from .core import oidc
 
@@ -29,7 +29,10 @@ def inject_user_when_present():
 @application.route("/login/oauth2")
 @oidc.require_login
 def login_oauth2():
-    return 'Welcome %s' % oidc.user_getfield('email')
+    id_token = oidc.get_cookie_id_token()
+    access_token = oidc.get_access_token() or {}
+    user = db.get_user_and_token_from_userinfo(id_token, access_token)
+    return 'Welcome %s' % user
 
 
 
@@ -56,7 +59,7 @@ def login_oauth2():
 #     jwt_token = jwt.decode(encoded_jwt_token, verify=False)
 #     id_token = jwt.decode(encoded_id_token, verify=False)
 
-#     session["oauth2_id"] = userinfo.get("sub")
+#     session["oidc_sub"] = userinfo.get("sub")
 #     userinfo["jwt_token"] = jwt_token
 #     session["token"] = token
 #     session["access_token"] = encoded_jwt_token

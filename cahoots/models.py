@@ -33,11 +33,11 @@ class User(Model):
         "user",
         metadata,
         db.Column("id", db.Integer, primary_key=True),
-        db.Column("oidc_sub_id", db.UnicodeText, nullable=True, index=True),
-        db.Column("email", db.String(255), nullable=False, unique=True),
+        db.Column("oidc_sub", db.UnicodeText, nullable=True, index=True),
+        db.Column("email", db.String(100), nullable=False, unique=True),
         db.Column("first_name", db.String(255)),
         db.Column("last_name", db.String(255)),
-        db.Column("picture", db.UnicodeText),
+        db.Column("profile_picture", db.UnicodeText),
         db.Column("created_at", db.DateTime, default=datetime.utcnow),
         db.Column("updated_at", db.DateTime, default=datetime.utcnow),
         db.Column("extra_data", db.UnicodeText),
@@ -61,6 +61,27 @@ class User(Model):
     def save(self, *args, **kw):
         self.set(updated_at=datetime.utcnow())
         return super().save(*args, **kw)
+
+    def add_token(
+        self,
+        id_token: str,
+        access_token: str,
+        expires_in: int = None,
+        expires_at: datetime = None,
+        scope: str = None,
+        token_type: str = None,
+        **extra_data,
+    ):
+        token = UserToken.get_or_create(user_id=self.id, id_token=json.dumps(id_token))
+        token.update_and_save(
+            access_token=access_token,
+            expires_at=ensure_datetime(expires_at),
+            expires_in=expires_in,
+            scope=scope,
+            token_type=token_type,
+            extra_data=json.dumps(extra_data, indent=4, default=str),
+        )
+        return token
 
 
 class UserToken(Model):
@@ -103,6 +124,28 @@ class UserToken(Model):
         data["scope"] = self.scope
         return data
 
+
+class JWTToken(Model):
+    table = db.Table(
+        "user_jwt_tokens",
+        metadata,
+        db.Column("id", db.Integer, primary_key=True),
+        db.Column("data", db.UnicodeText, nullable=True, index=True),
+        DefaultForeignKey("user_id", "user.id"),
+    )
+
+    @property
+    def user(self):
+        return User.find_one_by(id=self.user_id)
+
+    @property
+    def data(self):
+        return json.loads(self.get("data", "null"))
+
+    def to_dict(self):
+        data = self.serialize()
+        data["data"] = self.data
+        return data
 
 
 class Resume(Model):
