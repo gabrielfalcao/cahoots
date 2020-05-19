@@ -1,16 +1,13 @@
 # -*- coding: utf-8 -*-
-import jwt
 # import json
 import logging
-from typing import List
-from functools import wraps
 
-from flask import redirect, session, render_template, request, g, url_for
+from flask import redirect, session, request, g, url_for
 
 # from cahoots.models import JWTToken
-from . import db
+# from . import db
 from .core import application
-
+from .core import oidc
 
 logger = logging.getLogger(__name__)
 
@@ -30,17 +27,10 @@ def inject_user_when_present():
 
 
 @application.route("/login/oauth2")
+@oidc.require_login
 def login_oauth2():
-    params = {}
-    idp = request.args.get('idp')
-    if idp == 'azure':
-        params['kc_idp_hint'] = 'newstore-azure-ad'
+    return 'Welcome %s' % oidc.user_getfield('email')
 
-    return oauth2.authorize_redirect(
-        redirect_uri=application.config["OAUTH2_CALLBACK_URL"],
-        audience=application.config["OAUTH2_CLIENT_AUDIENCE"] or None,
-        **params
-    )
 
 
 # @application.route("/callback/oauth2")
