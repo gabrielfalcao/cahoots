@@ -16,7 +16,9 @@ if REDIS_HOST:
         host=REDIS_HOST or "localhost", port=int(os.getenv("REDIS_PORT") or 6379), db=0
     )
 else:
-    SESSION_TYPE = "filesystem"
+    SESSION_TYPE = "null"
+    SESSION_FILE_DIR = "/tmp/"
+    SESSION_FILE_THRESHOLD = 2
 
 # set this to true when serving the application via HTTPS or else the
 # flask-restful routes won't show up on swagger.
