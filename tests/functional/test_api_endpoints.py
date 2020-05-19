@@ -1,8 +1,8 @@
-import vcr
+# import vcr
 from .helpers import web_test
 
 
-@vcr.use_cassette('fixtures/vcr_cassettes/test_list_resumes.yaml')
+# @vcr.use_cassette('fixtures/vcr_cassettes/test_list_resumes.yaml')
 @web_test
 def test_list_resumes(context):
     ("GET on /api/v1/resume should return a json containing hello world")
