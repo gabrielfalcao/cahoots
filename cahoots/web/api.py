@@ -57,10 +57,15 @@ class ResumeListEndpoint(Resource):
     @ns.expect(resume_json)
     @oidc.accept_token(True, ['resume:create', 'resume:write', 'resume:admin'])
     def post(self):
-        email = api.payload.get("email")
-        password = api.payload.get("password")
+        title = api.payload.get("title")
+        academic_background = api.payload.get("academic_background")
+        work_experience = api.payload.get("work_experience")
         try:
-            resume = Resume.create(email=email, password=password)
+            resume = Resume.create(
+                title=title,
+                academic_background=academic_background,
+                work_experience=work_experience,
+            )
             return resume.to_dict(), 201
         except Exception as e:
             return {"error": str(e)}, 400

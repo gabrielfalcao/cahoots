@@ -71,7 +71,7 @@ class Resume(Model):
         db.Column("title", db.UnicodeText, nullable=True, index=True),
         db.Column("work_experience", db.UnicodeText, nullable=True, index=True),
         db.Column("academic_background", db.UnicodeText, nullable=True, index=True),
-        DefaultForeignKey("user_id", "user.id"),
+        # DefaultForeignKey("user_id", "user.id"),
     )
 
     @property
