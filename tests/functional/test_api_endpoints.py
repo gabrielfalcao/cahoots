@@ -10,7 +10,6 @@ def test_list_resumes(context):
     # Given that I perform a GET /api/v1/resume
     response = context.http.get("/api/v1/resume")
 
-    import ipdb;ipdb.set_trace()
     # When I check the response
     response.headers.should.have.key("Content-Type").being.equal("application/json")
 
