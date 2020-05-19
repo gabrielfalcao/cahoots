@@ -29,7 +29,7 @@ if config.HTTPS_API:
     Api.specs_url = specs_url
 
 
-api = Api(application, doc="/api/v1/")
+api = Api(application, doc="/api/")
 
 resume_json = api.model(
     "Resume",
@@ -44,7 +44,7 @@ rpc_request = api.model(
     "request", {"data": fields.String(required=True, description="some data")}
 )
 
-ns = api.namespace("resumes", description="Resume operations", path="/api/")
+ns = api.namespace("resume", description="Resume data API", path="/api/v1/")
 
 
 @ns.route("/resume")
