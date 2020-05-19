@@ -8,10 +8,10 @@ from flask import url_for, jsonify
 from .base import application
 
 from cahoots import config
-from cahoots.models import User
+from cahoots.models import Resume
 from cahoots.worker.client import EchoClient
 
-
+from cahoots.web.core import oidc
 logger = logging.getLogger(__name__)
 
 
@@ -31,73 +31,80 @@ if config.HTTPS_API:
 
 api = Api(application, doc="/api/")
 
-user_json = api.model(
-    "User",
+resume_json = api.model(
+    "Resume",
     {
-        "id": fields.String(required=False, description="the user id"),
-        "email": fields.String(required=False, description="email address"),
-        "token": fields.String(required=False, description="token"),
+        "id": fields.String(required=False, description="the resume id"),
+        "title": fields.String(required=False, description="title"),
+        "work_experience": fields.String(required=False, description="work_experience"),
+        "academic_background": fields.String(required=False, description="academic_background"),
     },
 )
 rpc_request = api.model(
     "request", {"data": fields.String(required=True, description="some data")}
 )
 
-ns = api.namespace("users", description="User operations", path="/api/")
+ns = api.namespace("resumes", description="Resume operations", path="/api/")
 
 
-@ns.route("/users")
-class UserListEndpoint(Resource):
+@ns.route("/resumes")
+class ResumeListEndpoint(Resource):
+    @oidc.accept_token(True, ['resume:list', 'resume:admin'])
     def get(self):
-        users = User.all()
-        return [u.to_dict() for u in users]
+        resumes = Resume.all()
+        return [u.to_dict() for u in resumes]
 
-    @ns.expect(user_json)
+    @ns.expect(resume_json)
+    @oidc.accept_token(True, ['resume:create', 'resume:write', 'resume:admin'])
     def post(self):
         email = api.payload.get("email")
         password = api.payload.get("password")
         try:
-            user = User.create(email=email, password=password)
-            return user.to_dict(), 201
+            resume = Resume.create(email=email, password=password)
+            return resume.to_dict(), 201
         except Exception as e:
             return {"error": str(e)}, 400
 
+    @oidc.accept_token(True, ['resume:admin'])
     def delete(self):
         response = []
         try:
-            for user in User.all():
-                user.delete()
-                response.append(user.to_dict())
+            for resume in Resume.all():
+                resume.delete()
+                response.append(resume.to_dict())
             return response, 200
         except Exception as e:
             return {"error": str(e)}, 400
 
 
-@ns.route("/user/<user_id>")
-class UserEndpoint(Resource):
-    def get(self, user_id):
-        user = User.find_one_by(id=user_id)
-        if not user:
-            return {"error": "user not found"}, 404
+@ns.route("/resume/<resume_id>")
+class ResumeEndpoint(Resource):
+    @oidc.accept_token(True, ['resume:read', 'resume:admin'])
+    def get(self, resume_id):
+        resume = Resume.find_one_by(id=resume_id)
+        if not resume:
+            return {"error": "resume not found"}, 404
 
-        return user.to_dict()
+        return resume.to_dict()
 
-    def delete(self, user_id):
-        user = User.find_one_by(id=user_id)
-        if not user:
-            return {"error": "user not found"}, 404
+    @oidc.accept_token(True, ['resume:delete', 'resume:admin'])
+    def delete(self, resume_id):
+        resume = Resume.find_one_by(id=resume_id)
+        if not resume:
+            return {"error": "resume not found"}, 404
 
-        user.delete()
-        return {"deleted": user.to_dict()}
+        resume.delete()
+        return {"deleted": resume.to_dict()}
 
-    @ns.expect(user_json)
-    def put(self, user_id):
-        user = User.find_by(id=user_id)
-        if not user:
-            return {"error": "user not found"}, 404
+    @oidc.accept_token(True, ['resume:edit', 'resume:write', 'resume:admin'])
+    @ns.expect(resume_json)
+    def put(self, resume_id):
+        resume = Resume.find_by(id=resume_id)
+        if not resume:
+            return {"error": "resume not found"}, 404
 
-        user = user.update_and_save(**api.payload)
-        return user.to_dict(), 200
+        resume = resume.update_and_save(**api.payload)
+        return resume.to_dict(), 200
 
 
 @application.route("/health")

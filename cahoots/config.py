@@ -63,19 +63,13 @@ OIDC_CLIENT_SECRETS = os.getenv("OIDC_CLIENT_SECRETS_JSON_PATH") or str(
 OIDC_ID_TOKEN_COOKIE_SECURE = bool(os.getenv("OIDC_ID_TOKEN_COOKIE_SECURE"))
 OIDC_REQUIRE_VERIFIED_EMAIL = bool(os.getenv("OIDC_REQUIRE_VERIFIED_EMAIL"))
 # OIDC_VALID_ISSUERS = None
-OIDC_OPENID_REALM = os.getenv("OIDC_OPENID_REALM")
+OIDC_OPENID_REALM = os.getenv("OIDC_OPENID_REALM") or 'http://localhost:5000/oidc_callback'
 # OIDC_CALLBACK_ROUTE = '/callback_oidc'
 OIDC_SCOPES = [
     "openid",
     "email",
     "profile",
-    "roles",
-    "address",
-    "microprofile-jwt",
-    "phone",
-    "offline_access",
 ]
-# OIDC_USER_INFO_ENABLED = True
 
 
 class dbconfig:
