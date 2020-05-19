@@ -31,7 +31,7 @@ def inject_user_when_present():
 def login_oauth2():
     id_token = oidc.get_cookie_id_token()
     access_token = oidc.get_access_token() or {}
-    user = db.get_user_and_token_from_userinfo(id_token, access_token)
+    user, token = db.get_user_and_token_from_userinfo(id_token, access_token)
     session['id_token'] = id_token
     session['access_token'] = access_token
     session['user'] = user.to_dict()
