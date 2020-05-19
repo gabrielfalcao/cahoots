@@ -62,6 +62,7 @@ class User(Model):
         self.set(updated_at=datetime.utcnow())
         return super().save(*args, **kw)
 
+
 class UserToken(Model):
     table = db.Table(
         "user_tokens",

@@ -58,6 +58,19 @@
       "config": {
         "code": "// by default, grants any permission associated with this policy\n$evaluation.grant();\n"
       }
+    },
+    {
+      "id": "b30c22cf-673a-47cb-bdc4-418f01f5c464",
+      "name": "Create Posts V1",
+      "description": "Use consensus to allow resume creation as per API V1",
+      "type": "scope",
+      "logic": "POSITIVE",
+      "decisionStrategy": "CONSENSUS",
+      "config": {
+        "resources": "[\"POST /api/v1/resume\"]",
+        "scopes": "[\"resume:write\",\"resume:create\",\"resume:admin\"]",
+        "applyPolicies": "[\"Default Policy\"]"
+      }
     }
   ],
   "scopes": [
