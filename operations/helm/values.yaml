@@ -95,8 +95,7 @@ postgresql:
     repository: postgres
     tag: 10.6
 
-  postgresqlDataDir: /tmp/postgresql-10.6/pgdata
-  # postgresqlDataDir: /cahoots.in/data/postgresql-10.6/pgdata
+  postgresqlDataDir: /cahoots.in/data/postgresql-10.6/pgdata-2020-05-19
   persistence:
     enabled: true
     mountPath: /cahoots.in/data/postgresql-10.6
