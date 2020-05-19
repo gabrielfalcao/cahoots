@@ -12,7 +12,7 @@ export OAUTH2_BASE_URL		:= https://id.t.newstore.net/auth/realms/gabriel-NA-4392
 export OAUTH2_CALLBACK_URL	:= https://keycloak.fulltest.co/callback/oauth2
 export OAUTH2_CLIENT_ID		:= keycloak-fulltest-co-1
 export OAUTH2_CLIENT_SCOPE	:= openid profile email roles
-export OAUTH2_CLIENT_SECRET	:= b369944a-272d-40fa-a427-17e5387fde7e
+export OAUTH2_CLIENT_SECRET	:= 07760934-2ebd-462d-af7d-5eb57f1c40b0
 export OAUTH2_DOMAIN		:= id.t.newstore.net
 export OAUTH2_CLIENT_AUDIENCE	:= https://keycloak.fulltest.co/
 
