@@ -17,8 +17,8 @@ if REDIS_HOST:
     )
 else:
     SESSION_TYPE = "filesystem"
-    SESSION_FILE_DIR = "/tmp/"
-    SESSION_FILE_THRESHOLD = 2
+    SESSION_FILE_DIR = "/tmp/flask-session"
+
 
 # set this to true when serving the application via HTTPS or else the
 # flask-restful routes won't show up on swagger.
