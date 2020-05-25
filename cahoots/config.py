@@ -69,7 +69,7 @@ OIDC_SCOPES = [
     "profile",
     "username",
     "service:templates",
-    "templates:read",
+    "template:read",
 ]
 OIDC_USER_INFO_ENABLED = False
 OIDC_RESOURCE_SERVER_ONLY = True
