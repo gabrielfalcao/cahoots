@@ -15,6 +15,22 @@ from cahoots.web.core import oidc
 logger = logging.getLogger(__name__)
 
 
+
+def parse_jwt_token(token):
+    if not token:
+        return {}
+    try:
+        return jwt.decode(token)
+    except Exception as e:
+        logger.warning(f'failed to decode JWT while verifying signature: {e}')
+        try:
+            raw = jwt.api_jws.base64url_decode(token.split('.')[1])
+            return json.loads(raw)
+        except Exception as e:
+            logger.exception(f'could not parse token {token!r}')
+            return {'error': str(e), 'token': token}
+
+
 @application.context_processor
 def inject_functions():
     return dict(is_authenticated=is_authenticated())
@@ -39,20 +55,6 @@ def set_global_vars():
     g.refresh_token = parse_jwt_token(session.get('refresh_token'))
 
 
-def parse_jwt_token(token):
-    if not token:
-        return {}
-    try:
-        return jwt.decode(token)
-    except Exception as e:
-        logger.warning(f'failed to decode JWT while verifying signature: {e}')
-        try:
-            raw = jwt.api_jws.base64url_decode(token.split('.')[1])
-            return json.loads(raw)
-        except Exception as e:
-            logger.exception(f'could not parse token {token!r}')
-            return {'error': str(e), 'token': token}
-
 
 @application.route("/login/oauth2")
 @oidc.require_login
@@ -76,11 +78,13 @@ def auth_admin_push_revokation(path=""):
     logger.info(f"Keycloak sent headers: {request.headers}")
     logger.info(f"Keycloak sent args: {request.args}")
     logger.info(f"Keycloak sent data {request.data}")
+    jwt_token = parse_jwt_token(request.data)
     record = AdminRequest.create(**{
         'path': request.path,
         'method': request.method,
         'args': json.dumps(request.args, default=str),
         'data': json.dumps(request.data, default=str),
+        'jwt': jwt_token,
         'headers': json.dumps(request.headers, default=str),
     })
     return json_response(record.to_dict())
