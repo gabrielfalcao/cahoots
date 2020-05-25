@@ -71,6 +71,8 @@ OIDC_SCOPES = [
     "openid",
     "email",
     "profile",
+    "username",
+    "service:templates"
 ]
 
 
