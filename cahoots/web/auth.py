@@ -46,6 +46,9 @@ def inject_user_when_present():
 
 @application.before_request
 def set_global_vars():
+    if not hasattr(g, 'oidc_id_token')
+        g.oidc_id_token = None
+
     user_id = session.get("user_id")
     if not user_id:
         return
