@@ -72,7 +72,15 @@ OIDC_SCOPES = [
     "template:read",
 ]
 OIDC_USER_INFO_ENABLED = False
-OIDC_RESOURCE_SERVER_ONLY = True
+
+# --------------------------------
+# OIDC_RESOURCE_SERVER_ONLY=True breaks with:
+# - werkzeug.routing.BuildError: Could not build url for endpoint
+#   '_oidc_callback'. Did you mean 'dashboard' instead?
+# - appcontext does not have oidc_id_token attribute
+OIDC_RESOURCE_SERVER_ONLY = False
+# --------------------------------
+
 OIDC_INTROSPECTION_AUTH_METHOD = 'bearer'
 
 class dbconfig:
