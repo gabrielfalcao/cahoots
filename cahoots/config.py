@@ -72,7 +72,8 @@ OIDC_SCOPES = [
     "email",
     "profile",
     "username",
-    "service:templates"
+    "service:templates",
+    "templates:read",
 ]
 
 

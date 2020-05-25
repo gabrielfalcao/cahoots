@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# import json
+import json
 import logging
 import jwt
 
@@ -27,21 +27,44 @@ def inject_user_when_present():
     return dict(user=user)
 
 
+@application.before_request
+def set_global_vars():
+    user_id = session.get('user_id')
+    if not user_id:
+        return
+    g.user = db.User.find_one_by(id=user_id)
+    g.access_token = parse_jwt_token(session.get('access_token'))
+    g.refresh_token = parse_jwt_token(session.get('refresh_token'))
+
+
+def parse_jwt_token(token):
+    if not token:
+        return {}
+    try:
+        return jwt.decode(token)
+    except Exception as e:
+        logger.warning(f'failed to decode JWT while verifying signature: {e}')
+        try:
+            raw = jwt.api_jws.base64url_decode(token.split('.')[1])
+            return json.loads(raw)
+        except Exception as e:
+            logger.exception(f'could not parse token {token!r}')
+            return {'error': str(e), 'token': token}
+
+
 @application.route("/login/oauth2")
 @oidc.require_login
 def login_oauth2():
     id_token = oidc.get_cookie_id_token()
     access_token = oidc.get_access_token()
-    if access_token:
-        try:
-            access_token = jwt.api_jws.base64url_decode(access_token.split('.')[1])
-        except Exception as e:
-            access_token = {'access token': access_token, 'error': str(e)}
+    refresh_token = oidc.get_refresh_token()
 
-    user, token = db.get_user_and_token_from_userinfo(id_token, access_token)
+    user, token = db.get_user_and_token_from_userinfo(id_token, parse_jwt_token(access_token))
     session['id_token'] = id_token
     session['access_token'] = access_token
-    session['user'] = user.to_dict()
+    session['refresh_token'] = refresh_token
+    session['user_id'] = user.id
+    set_global_vars()
     return redirect('/')
 
 

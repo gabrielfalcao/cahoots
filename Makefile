@@ -1,4 +1,4 @@
-.PHONY: tests all unit functional run docker-image docker-push docker migrate db deploy deploy-with-helm port-forward wheels docker-base-image redeploy check docker-pull clean
+.PHONY: tests all unit functional run docker-image docker-push docker migrate db deploy deploy-with-helm port-forward wheels docker-base-image redeploy check docker-pull clean purge-sessions
 
 GIT_ROOT		:= $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 VENV_ROOT		:= $(GIT_ROOT)/.venv
@@ -66,7 +66,7 @@ functional:| $(VENV)/bin/nosetests  # runs functional tests
 	$(VENV)/bin/nosetests tests/functional
 
 # runs the server, exposing the routes to http://localhost:5000
-run: | $(VENV)/bin/python
+run: purge-sessions | $(VENV)/bin/python
 	$(VENV)/bin/cahoots-in web --port=5000
 
 
@@ -107,7 +107,7 @@ port-forward:
 forward-queue-port:
 	kubepfm --target "$(NAMESPACE):.*queue:4242:4242"
 
-db: | $(VENV)/bin/cahoots-in
+db: purge-sessions | $(VENV)/bin/cahoots-in
 	-@2>/dev/null dropdb cahoots_in || echo ''
 	-@2>/dev/null dropuser cahoots_in || echo 'no db user'
 	-@2>/dev/null createuser cahoots_in --createrole --createdb
@@ -115,6 +115,10 @@ db: | $(VENV)/bin/cahoots-in
 	-@psql postgres << "CREATE ROLE cahoots_in WITH LOGIN PASSWORD 'Wh15K3y'"
 	-@psql postgres << "GRANT ALL PRIVILEGES ON DATABASE cahoots_in TO cahoots_in;"
 	$(VENV)/bin/cahoots-in migrate-db
+
+purge-sessions:
+	$(VENV)/bin/cahoots-in purge-sessions
+
 
 template:
 	helm dependency update --skip-refresh operations/helm/

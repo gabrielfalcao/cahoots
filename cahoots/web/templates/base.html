@@ -50,20 +50,6 @@
           {% block navbar %}
           {% block navbar_subnavs %}{% endblock %}
           <ul class="nav navbar-nav navbar-right">
-            <li>
-              <a href="/api/">
-                <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
-
-                Browse API
-
-              </a>
-            </li>
-            <li>
-              <a href="/config">
-                <span class="glyphicon glyphicon-th" aria-hidden="true"></span>
-                Show Container Config
-              </a>
-            </li>
             {% if not session.get("id_token") %}
             <li>
               <a href="{{ url_for('login_oauth2') }}">
@@ -72,6 +58,14 @@
               </a>
             </li>
             {% else %}
+            <li>
+              <a href="/api/">
+                <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
+
+                Browse API
+
+              </a>
+            </li>
             <li>
               <a href="/logout">
                 <span class="glyphicon glyphicon-off" aria-hidden="true"></span>

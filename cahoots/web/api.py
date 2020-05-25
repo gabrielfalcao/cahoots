@@ -4,6 +4,9 @@ import logging
 from flask_restplus import Api
 from flask_restplus import Resource
 from flask_restplus import fields
+from flask_restplus import reqparse
+from flask_restplus import inputs
+
 from flask import url_for, jsonify
 from .base import application
 
@@ -40,10 +43,17 @@ template_json = api.model(
     },
 )
 
+parser = reqparse.RequestParser()
+parser.add_argument('Authorization', location='headers', type=inputs.regex('^Bearer\s+\S+$'), help='must be "Bearer <token>" replace `<token>` with a valid JWT-encoded access token')
+
+# parser.add_argument('oidc_id_token', location='cookies', help='the id token provided by keycloak')
+# parser.add_argument('session', location='cookies', help='the session id containing the state of authentication')
+
 template_ns = api.namespace("Template API V1", description="Fake NewStore Template API", path="/api/v1/templates")
 
 
 @template_ns.route("/templates")
+@template_ns.expect(parser)
 class TemplateListEndpoint(Resource):
     @oidc.accept_token(True, scopes_required=['template:read'])
     def get(self):
