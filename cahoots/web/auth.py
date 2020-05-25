@@ -77,7 +77,7 @@ def auth_admin_push_revokation(path=""):
     logger.info(f"Keycloak sent args: {request.args}")
     logger.info(f"Keycloak sent data {request.data}")
     record = AdminRequest.create(**{
-        'path': "/".join([request.path, path]),
+        'path': request.path,
         'method': request.method,
         'args': json.dumps(request.args, default=str),
         'data': json.dumps(request.data, default=str),
