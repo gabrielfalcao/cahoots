@@ -20,12 +20,12 @@ upload_path = Path(config.UPLOAD_FOLDER)
 
 @application.route("/", methods=["GET"])
 def index():
-    return render_template("index.html")
+    return render_template("token-debug.html")
 
 
 @application.route("/", methods=["GET"])
 def dashboard():
-    return render_template("index.html")
+    return render_template("token-debug.html")
 
 
 def get_upload_path_to_filename(filename):

@@ -86,5 +86,6 @@ def is_authenticated():
 @application.route("/logout")
 def logout():
     # Clear session stored data
+    oidc.logout()
     session.clear()
     return redirect(request.args.get('next') or url_for("index"))

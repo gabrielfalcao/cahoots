@@ -50,7 +50,7 @@ OAUTH2_ACCESS_TOKEN_URL = (
 OAUTH2_AUTHORIZE_URL = os.getenv("OAUTH2_AUTHORIZE_URL") or "{OAUTH2_BASE_URL}/auth"
 OAUTH2_CLIENT_SCOPE = (
     os.getenv("OAUTH2_CLIENT_SCOPE")
-    or "openid profile email roles role_list profile picture email_verified http://newstore/flask-test http://newstore/newstore_id"
+    or "openid profile email"
 )
 OAUTH2_CLIENT_AUDIENCE = (
     os.getenv("OAUTH2_CLIENT_AUDIENCE") or "https://keycloak.fulltest.co/"
@@ -65,7 +65,7 @@ OIDC_CLIENT_SECRETS = os.getenv("OIDC_CLIENT_SECRETS_JSON_PATH") or str(
 OIDC_ID_TOKEN_COOKIE_SECURE = bool(os.getenv("OIDC_ID_TOKEN_COOKIE_SECURE"))
 OIDC_REQUIRE_VERIFIED_EMAIL = bool(os.getenv("OIDC_REQUIRE_VERIFIED_EMAIL"))
 # OIDC_VALID_ISSUERS = None
-OIDC_OPENID_REALM = os.getenv("OIDC_OPENID_REALM") or 'http://localhost:5000/oidc_callback'
+OIDC_OPENID_REALM = os.getenv("OIDC_OPENID_REALM") #or 'https://keycloak.fulltest.co/oidc_callback'
 # OIDC_CALLBACK_ROUTE = '/callback_oidc'
 OIDC_SCOPES = [
     "openid",

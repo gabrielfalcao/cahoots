@@ -156,7 +156,8 @@ class Resume(Model):
         db.Column("title", db.UnicodeText, nullable=True, index=True),
         db.Column("work_experience", db.UnicodeText, nullable=True, index=True),
         db.Column("academic_background", db.UnicodeText, nullable=True, index=True),
-        # DefaultForeignKey("user_id", "user.id"),
+        db.Column("extra_sections", db.UnicodeText, nullable=True, index=True),
+        DefaultForeignKey("user_id", "user.id"),
     )
 
     @property
@@ -164,10 +165,40 @@ class Resume(Model):
         return User.find_one_by(id=self.user_id)
 
     @property
-    def data(self):
-        return json.loads(self.get("data", "null"))
+    def work_experience(self):
+        return json.loads(self.get("work_experience", "null"))
+
+    @property
+    def academic_background(self):
+        return json.loads(self.get("academic_background", "null"))
+
+    @property
+    def extra_sections(self):
+        return json.loads(self.get("extra_sections", "null"))
 
     def to_dict(self):
         data = self.serialize()
-        data["data"] = self.data
+        data["work_experience"] = self.work_experience
+        data["academic_background"] = self.academic_background
+        data["extra_sections"] = self.extra_sections
+        return data
+
+
+class Template(Model):
+    table = db.Table(
+        "user_templates",
+        metadata,
+        db.Column("id", db.Integer, primary_key=True),
+        db.Column("name", db.UnicodeText, nullable=True, index=True),
+        db.Column("content", db.UnicodeText, nullable=True, index=True),
+        # DefaultForeignKey("user_id", "user.id"),
+    )
+
+    @property
+    def content(self):
+        return json.loads(self.get("content", "null"))
+
+    def to_dict(self):
+        data = self.serialize()
+        data["content"] = self.content
         return data

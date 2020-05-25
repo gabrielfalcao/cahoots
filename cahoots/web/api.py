@@ -8,7 +8,7 @@ from flask import url_for, jsonify
 from .base import application
 
 from cahoots import config
-from cahoots.models import Resume
+from cahoots.models import Template
 from cahoots.worker.client import EchoClient
 
 from cahoots.web.core import oidc
@@ -31,82 +31,81 @@ if config.HTTPS_API:
 
 api = Api(application, doc="/api/")
 
-resume_json = api.model(
-    "Resume",
+template_json = api.model(
+    "Template",
     {
-        "id": fields.String(required=False, description="the resume id"),
-        "title": fields.String(required=False, description="title"),
-        "work_experience": fields.String(required=False, description="work_experience"),
-        "academic_background": fields.String(required=False, description="academic_background"),
+        "id": fields.String(required=False, description="the template id"),
+        "name": fields.String(required=True, description="name unique name for this template"),
+        "content": fields.String(required=True, description="the JSON data representing the template"),
     },
 )
 
-ns = api.namespace("Resume API V1", description="CRUD API for Resumes attached to a user", path="/api/v1/")
+template_ns = api.namespace("Template API V1", description="Fake NewStore Template API", path="/api/v1/templates")
 
 
-@ns.route("/resume")
-class ResumeListEndpoint(Resource):
-    # @oidc.accept_token(True, scopes_required=['resume:list', 'resume:admin'])
+@template_ns.route("/template")
+class TemplateListEndpoint(Resource):
+    #@oidc.accept_token(True, scopes_required=['template:read'])
     def get(self):
-        resumes = Resume.all()
-        return [u.to_dict() for u in resumes]
+        templates = Template.all()
+        return [u.to_dict() for u in templates]
 
-    @ns.expect(resume_json)
-    @oidc.accept_token(True, scopes_required=['resume:create', 'resume:write', 'resume:admin'])
+    @template_ns.expect(template_json)
+    @oidc.accept_token(True, scopes_required=['template:write'])
     def post(self):
-        title = api.payload.get("title")
-        academic_background = api.payload.get("academic_background")
-        work_experience = api.payload.get("work_experience")
+        name = api.payload.get("name")
+        content = api.payload.get("content")
         try:
-            resume = Resume.create(
-                title=title,
-                academic_background=academic_background,
-                work_experience=work_experience,
+            template = Template.create(
+                name=name,
+                content=content
             )
-            return resume.to_dict(), 201
+            return template.to_dict(), 201
         except Exception as e:
             return {"error": str(e)}, 400
 
-    @oidc.accept_token(True, scopes_required=['resume:admin'])
+    @oidc.accept_token(True, scopes_required=['template:write'])
     def delete(self):
         response = []
         try:
-            for resume in Resume.all():
-                resume.delete()
-                response.append(resume.to_dict())
+            for template in Template.all():
+                template.delete()
+                response.append(template.to_dict())
             return response, 200
         except Exception as e:
             return {"error": str(e)}, 400
 
 
-@ns.route("/resume/<resume_id>")
-class ResumeEndpoint(Resource):
-    @oidc.accept_token(True, scopes_required=['resume:read', 'resume:admin'])
-    def get(self, resume_id):
-        resume = Resume.find_one_by(id=resume_id)
-        if not resume:
-            return {"error": "resume not found"}, 404
+@template_ns.route("/template/<template_id>")
+class TemplateEndpoint(Resource):
+    @oidc.accept_token(True, scopes_required=['template:read'])
+    def get(self, template_id):
+        template = Template.find_one_by(id=template_id)
+        if not template:
+            return {"error": "template not found"}, 404
 
-        return resume.to_dict()
+        return template.to_dict()
 
-    @oidc.accept_token(True, scopes_required=['resume:delete', 'resume:admin'])
-    def delete(self, resume_id):
-        resume = Resume.find_one_by(id=resume_id)
-        if not resume:
-            return {"error": "resume not found"}, 404
+    @oidc.accept_token(True, scopes_required=['template:write'])
+    def delete(self, template_id):
+        template = Template.find_one_by(id=template_id)
+        if not template:
+            return {"error": "template not found"}, 404
 
-        resume.delete()
-        return {"deleted": resume.to_dict()}
+        template.delete()
+        return {"deleted": template.to_dict()}
 
-    @oidc.accept_token(True, scopes_required=['resume:edit', 'resume:write', 'resume:admin'])
-    @ns.expect(resume_json)
-    def put(self, resume_id):
-        resume = Resume.find_by(id=resume_id)
-        if not resume:
-            return {"error": "resume not found"}, 404
+    @oidc.accept_token(True, scopes_required=['template:write'])
+    @template_ns.expect(template_json)
+    def put(self, template_id):
+        template = Template.find_by(id=template_id)
+        if not template:
+            return {"error": "template not found"}, 404
 
-        resume = resume.update_and_save(**api.payload)
-        return resume.to_dict(), 200
+        name = api.payload.get("name")
+        content = api.payload.get("content")
+        template = template.update_and_save(name=name, content=content)
+        return template.to_dict(), 200
 
 
 @application.route("/health")
