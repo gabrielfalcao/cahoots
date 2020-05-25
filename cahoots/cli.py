@@ -106,13 +106,13 @@ def print_version():
 
 @main.command(name="purge-sessions")
 def purge_session():
-    if config.SESSION_TYPE == 'filesystem':
+    if config.SESSION_TYPE == "filesystem":
         path = Path(config.SESSION_FILE_DIR)
-        for path in path.glob('*'):
+        for path in path.glob("*"):
             path.unlink()
-            print(f'deleted {path}')
+            print(f"deleted {path}")
     else:
-        print('cannot purge session type {config.SESSION_TYPE}')
+        print("cannot purge session type {config.SESSION_TYPE}")
 
 
 @main.command("check")

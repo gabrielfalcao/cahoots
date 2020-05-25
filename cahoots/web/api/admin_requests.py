@@ -29,7 +29,9 @@ parser = reqparse.RequestParser()
 # parser.add_argument('oidc_id_token', location='cookies', help='the id token provided by keycloak')
 # parser.add_argument('session', location='cookies', help='the session id containing the state of authentication')
 
-admin_request_ns = api.namespace("AdminRequest API V1", description="Fake NewStore AdminRequest API", path="/api/v1")
+admin_request_ns = api.namespace(
+    "AdminRequest API V1", description="Fake NewStore AdminRequest API", path="/api/v1"
+)
 
 
 @admin_request_ns.route("/admin-requests")

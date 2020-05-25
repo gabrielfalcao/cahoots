@@ -50,7 +50,9 @@ def get_user_and_token_from_userinfo(
 
     user = User.get_or_create(email=email)
 
-    token = user.add_token(id_token=userinfo, access_token=json.dumps(token, indent=4, default=str))
+    token = user.add_token(
+        id_token=userinfo, access_token=json.dumps(token, indent=4, default=str)
+    )
 
     oidc_sub = userinfo.pop("sub", None)  # might be auth0-specific,
     # check for keycloak

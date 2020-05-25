@@ -16,12 +16,18 @@ resume_json = api.model(
         "id": fields.String(required=False, description="the resume id"),
         "title": fields.String(required=False, description="title"),
         "work_experience": fields.String(required=False, description="work_experience"),
-        "academic_background": fields.String(required=False, description="academic_background"),
+        "academic_background": fields.String(
+            required=False, description="academic_background"
+        ),
         "extra_sections": fields.String(required=False, description="extra_sections"),
     },
 )
 
-resume_ns = api.namespace("Resume API V1", description="CRUD API for Resumes attached to a user", path="/api/v1/resumes")
+resume_ns = api.namespace(
+    "Resume API V1",
+    description="CRUD API for Resumes attached to a user",
+    path="/api/v1/resumes",
+)
 
 
 @resume_ns.route("/resume")
@@ -32,7 +38,9 @@ class ResumeListEndpoint(Resource):
         return [u.to_dict() for u in resumes]
 
     @resume_ns.expect(resume_json)
-    @oidc.accept_token(True, scopes_required=['resume:create', 'resume:write', 'resume:admin'])
+    @oidc.accept_token(
+        True, scopes_required=["resume:create", "resume:write", "resume:admin"]
+    )
     def post(self):
         title = api.payload.get("title")
         academic_background = api.payload.get("academic_background")
@@ -47,7 +55,7 @@ class ResumeListEndpoint(Resource):
         except Exception as e:
             return {"error": str(e)}, 400
 
-    @oidc.accept_token(True, scopes_required=['resume:admin'])
+    @oidc.accept_token(True, scopes_required=["resume:admin"])
     def delete(self):
         response = []
         try:
@@ -61,7 +69,7 @@ class ResumeListEndpoint(Resource):
 
 @resume_ns.route("/resume/<resume_id>")
 class ResumeEndpoint(Resource):
-    @oidc.accept_token(True, scopes_required=['resume:read', 'resume:admin'])
+    @oidc.accept_token(True, scopes_required=["resume:read", "resume:admin"])
     def get(self, resume_id):
         resume = Resume.find_one_by(id=resume_id)
         if not resume:
@@ -69,7 +77,7 @@ class ResumeEndpoint(Resource):
 
         return resume.to_dict()
 
-    @oidc.accept_token(True, scopes_required=['resume:delete', 'resume:admin'])
+    @oidc.accept_token(True, scopes_required=["resume:delete", "resume:admin"])
     def delete(self, resume_id):
         resume = Resume.find_one_by(id=resume_id)
         if not resume:
@@ -78,7 +86,9 @@ class ResumeEndpoint(Resource):
         resume.delete()
         return {"deleted": resume.to_dict()}
 
-    @oidc.accept_token(True, scopes_required=['resume:edit', 'resume:write', 'resume:admin'])
+    @oidc.accept_token(
+        True, scopes_required=["resume:edit", "resume:write", "resume:admin"]
+    )
     @resume_ns.expect(resume_json)
     def put(self, resume_id):
         resume = Resume.find_by(id=resume_id)

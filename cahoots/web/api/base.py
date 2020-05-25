@@ -8,9 +8,11 @@ from cahoots.utils import json_response
 from cahoots.web.base import application
 
 from cahoots import config
+
 # from cahoots.worker.client import EchoClient
 
 from cahoots.web.core import oidc
+
 logger = logging.getLogger(__name__)
 
 

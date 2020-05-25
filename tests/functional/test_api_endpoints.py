@@ -23,12 +23,13 @@ def test_create_template(context):
     ("POST on /api/v1/templates/templates should return a json ")
 
     # Given that I perform a POST /api/v1/templates/template
-    response = context.http.post("/api/v1/templates/templates", data=json.dumps({
-        "name": "test create template 1",
-        "content": json.dumps({
-            "some": "data"
-        })
-    }), headers={'Content-Type': 'application/json'})
+    response = context.http.post(
+        "/api/v1/templates/templates",
+        data=json.dumps(
+            {"name": "test create template 1", "content": json.dumps({"some": "data"})}
+        ),
+        headers={"Content-Type": "application/json"},
+    )
 
     # When I check the response
     response.headers.should.have.key("Content-Type").being.equal("application/json")
