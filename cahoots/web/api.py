@@ -45,13 +45,13 @@ template_ns = api.namespace("Template API V1", description="Fake NewStore Templa
 
 @template_ns.route("/templates")
 class TemplateListEndpoint(Resource):
-    #@oidc.accept_token(True, scopes_required=['template:read'])
+    @oidc.accept_token(True, scopes_required=['template:read'])
     def get(self):
         templates = Template.all()
         return [u.to_dict() for u in templates]
 
     @template_ns.expect(template_json)
-    @oidc.accept_token(True, scopes_required=['template:write'])
+    # @oidc.accept_token(True, scopes_required=['template:write'])
     def post(self):
         name = api.payload.get("name")
         content = api.payload.get("content")

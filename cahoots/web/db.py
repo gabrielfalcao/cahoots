@@ -47,12 +47,10 @@ def get_user_and_token_from_userinfo(
 
     if isinstance(token, str):
         token = {"access_token": token}
-    if not isinstance(token, dict):
-        raise ValidationError(f"token must be a dict, got: {token!r}")
 
     user = User.get_or_create(email=email)
 
-    token = user.add_token(id_token=userinfo, access_token=token)
+    token = user.add_token(id_token=userinfo, access_token=json.dumps(token, indent=4, default=str))
 
     oidc_sub = userinfo.pop("sub", None)  # might be auth0-specific,
     # check for keycloak

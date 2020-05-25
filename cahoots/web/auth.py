@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # import json
 import logging
+import jwt
 
 from flask import redirect, session, request, g, url_for
 
@@ -30,12 +31,18 @@ def inject_user_when_present():
 @oidc.require_login
 def login_oauth2():
     id_token = oidc.get_cookie_id_token()
-    access_token = oidc.get_access_token() or {}
+    access_token = oidc.get_access_token()
+    if access_token:
+        try:
+            access_token = jwt.api_jws.base64url_decode(access_token.split('.')[1])
+        except Exception as e:
+            access_token = {'access token': access_token, 'error': str(e)}
+
     user, token = db.get_user_and_token_from_userinfo(id_token, access_token)
     session['id_token'] = id_token
     session['access_token'] = access_token
     session['user'] = user.to_dict()
-    return redirect('/api/')
+    return redirect('/')
 
 
 # @application.route("/callback/oauth2")
