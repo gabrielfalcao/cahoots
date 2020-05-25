@@ -87,7 +87,7 @@ spec:
       containers:
       - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
-        name: {{ .Chart.Name }}
+        name: {{ .Chart.Name }}-web-application-server
         command: ['/venv/bin/cahoots-in', 'web']
         livenessProbe:
           httpGet:
