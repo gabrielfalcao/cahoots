@@ -43,4 +43,4 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - pool-callosum-3u5wj
+          - pool-callosum-3ubm3
