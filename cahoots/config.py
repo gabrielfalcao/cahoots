@@ -72,7 +72,8 @@ OIDC_SCOPES = [
     "templates:read",
 ]
 OIDC_USER_INFO_ENABLED = False
-
+OIDC_RESOURCE_SERVER_ONLY = True
+OIDC_INTROSPECTION_AUTH_METHOD = 'bearer'
 
 class dbconfig:
     host = os.getenv("POSTGRES_HOST") or "localhost"
