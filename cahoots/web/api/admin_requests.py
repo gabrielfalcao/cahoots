@@ -17,9 +17,11 @@ admin_request_json = api.model(
     {
         "id": fields.String(required=True, description="the admin_request id"),
         "method": fields.String(required=True),
+        "path": fields.String(required=True),
         "args": fields.String(required=True),
         "data": fields.String(required=True),
         "headers": fields.String(required=True),
+        "jwt_token": fields.String(required=True),
     },
 )
 

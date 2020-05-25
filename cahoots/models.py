@@ -190,7 +190,7 @@ class Template(Model):
         metadata,
         db.Column("id", db.Integer, primary_key=True),
         db.Column("name", db.UnicodeText, nullable=True, index=True),
-        db.Column("content", db.UnicodeText, nullable=True, index=True),
+        db.Column("content", db.UnicodeText, nullable=True),
     )
 
     @property
@@ -210,14 +210,19 @@ class AdminRequest(Model):
         db.Column("id", db.Integer, primary_key=True),
         db.Column("method", db.Unicode(20), nullable=True, index=True),
         db.Column("path", db.UnicodeText, nullable=True, index=True),
-        db.Column("args", db.UnicodeText, nullable=True, index=True),
-        db.Column("data", db.UnicodeText, nullable=True, index=True),
-        db.Column("headers", db.UnicodeText, nullable=True, index=True),
+        db.Column("jwt_token", db.UnicodeText, nullable=True),
+        db.Column("args", db.UnicodeText, nullable=True),
+        db.Column("data", db.UnicodeText, nullable=True),
+        db.Column("headers", db.UnicodeText, nullable=True),
     )
 
     @property
     def args(self):
         return json.loads(self.get("args", "{}"))
+
+    @property
+    def jwt_token(self):
+        return json.loads(self.get("jwt_token", "{}"))
 
     @property
     def data(self):
@@ -232,4 +237,5 @@ class AdminRequest(Model):
         data["headers"] = self.headers
         data["data"] = self.data
         data["args"] = self.args
+        data["jwt_token"] = self.jwt_token
         return data

@@ -15,7 +15,6 @@ from cahoots.web.core import oidc
 logger = logging.getLogger(__name__)
 
 
-
 def parse_jwt_token(token):
     if not token:
         return {}
@@ -84,7 +83,7 @@ def auth_admin_push_revokation(path=""):
         'method': request.method,
         'args': json.dumps(request.args, default=str),
         'data': json.dumps(request.data, default=str),
-        'jwt': jwt_token,
+        'jwt_token': json.dumps(jwt_token, default=str),
         'headers': json.dumps(request.headers, default=str),
     })
     return json_response(record.to_dict())
