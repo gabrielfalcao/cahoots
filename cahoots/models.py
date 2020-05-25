@@ -186,12 +186,11 @@ class Resume(Model):
 
 class Template(Model):
     table = db.Table(
-        "user_templates",
+        "templates",
         metadata,
         db.Column("id", db.Integer, primary_key=True),
         db.Column("name", db.UnicodeText, nullable=True, index=True),
         db.Column("content", db.UnicodeText, nullable=True, index=True),
-        # DefaultForeignKey("user_id", "user.id"),
     )
 
     @property
@@ -201,4 +200,36 @@ class Template(Model):
     def to_dict(self):
         data = self.serialize()
         data["content"] = self.content
+        return data
+
+
+class AdminRequest(Model):
+    table = db.Table(
+        "keycloak_admin_requests",
+        metadata,
+        db.Column("id", db.Integer, primary_key=True),
+        db.Column("method", db.Unicode(20), nullable=True, index=True),
+        db.Column("args", db.UnicodeText, nullable=True, index=True),
+        db.Column("data", db.UnicodeText, nullable=True, index=True),
+        db.Column("headers", db.UnicodeText, nullable=True, index=True),
+        db.Column("requested_at", db.DateTime, default=datetime.utcnow, nullable=True),
+    )
+
+    @property
+    def args(self):
+        return json.loads(self.get("args", "{}"))
+
+    @property
+    def data(self):
+        return json.loads(self.get("data", "{}"))
+
+    @property
+    def headers(self):
+        return json.loads(self.get("headers", "{}"))
+
+    def to_dict(self):
+        data = self.serialize()
+        data["headers"] = self.headers
+        data["data"] = self.data
+        data["args"] = self.args
         return data

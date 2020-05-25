@@ -4,7 +4,8 @@ import logging
 import jwt
 
 from flask import redirect, session, request, g, url_for
-
+from datetime import datetime
+from cahoots.models import AdminRequest
 from cahoots.utils import json_response
 from cahoots.web import db
 from cahoots.web.core import application
@@ -74,11 +75,14 @@ def auth_admin_push_revokation():
     logger.info(f"Keycloak sent headers: {request.headers}")
     logger.info(f"Keycloak sent args: {request.args}")
     logger.info(f"Keycloak sent data {request.data}")
-    return json_response({
-        'args': request.args,
-        'data': request.data,
-        'headers': dict(request.headers),
+    record = AdminRequest.create(**{
+        'method': request.method,
+        'args': json.dumps(request.args, default=str),
+        'data': json.dumps(request.data, default=str),
+        'headers': json.dumps(request.headers, default=str),
+        'requested_at': datetime.utcnow(),
     })
+    return json_response(record.to_dict())
 
 
 # @application.route("/callback/oauth2")

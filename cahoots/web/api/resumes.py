@@ -1,35 +1,14 @@
 # -*- coding: utf-8 -*-
 #
 import logging
-from flask_restplus import Api
 from flask_restplus import Resource
 from flask_restplus import fields
-from flask import url_for, jsonify
-from .base import application
 
-from cahoots import config
 from cahoots.models import Resume
-from cahoots.worker.client import EchoClient
+from .base import api, oidc
 
-from cahoots.web.core import oidc
 logger = logging.getLogger(__name__)
 
-
-if config.HTTPS_API:
-
-    # monkey-patch Flask-RESTful to generate proper swagger url
-    @property
-    def specs_url(self):
-        """Monkey patch for HTTPS"""
-        return url_for(self.endpoint("specs"), _external=True, _scheme="https")
-
-    logger.warning(
-        "monkey-patching swagger to support https " "(because HTTPS_API env var is set)"
-    )
-    Api.specs_url = specs_url
-
-
-api = Api(application, doc="/api/")
 
 resume_json = api.model(
     "Resume",
@@ -43,7 +22,6 @@ resume_json = api.model(
 )
 
 resume_ns = api.namespace("Resume API V1", description="CRUD API for Resumes attached to a user", path="/api/v1/resumes")
-template_ns = api.namespace("Template API V1", description="Fake NewStore Template API", path="/api/v1/templates")
 
 
 @resume_ns.route("/resume")
@@ -109,8 +87,3 @@ class ResumeEndpoint(Resource):
 
         resume = resume.update_and_save(**api.payload)
         return resume.to_dict(), 200
-
-
-@application.route("/health")
-def get(*args, **kw):
-    return jsonify({"system": "ok"})

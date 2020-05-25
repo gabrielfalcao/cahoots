@@ -1,38 +1,16 @@
 # -*- coding: utf-8 -*-
 #
 import logging
-from flask_restplus import Api
 from flask_restplus import Resource
 from flask_restplus import fields
 from flask_restplus import reqparse
 from flask_restplus import inputs
 
-from flask import url_for, jsonify
-from .base import application
-
-from cahoots import config
 from cahoots.models import Template
-from cahoots.worker.client import EchoClient
+from .base import api, oidc
 
-from cahoots.web.core import oidc
 logger = logging.getLogger(__name__)
 
-
-if config.HTTPS_API:
-
-    # monkey-patch Flask-RESTful to generate proper swagger url
-    @property
-    def specs_url(self):
-        """Monkey patch for HTTPS"""
-        return url_for(self.endpoint("specs"), _external=True, _scheme="https")
-
-    logger.warning(
-        "monkey-patching swagger to support https " "(because HTTPS_API env var is set)"
-    )
-    Api.specs_url = specs_url
-
-
-api = Api(application, doc="/api/")
 
 template_json = api.model(
     "Template",
@@ -116,8 +94,3 @@ class TemplateEndpoint(Resource):
         content = api.payload.get("content")
         template = template.update_and_save(name=name, content=content)
         return template.to_dict(), 200
-
-
-@application.route("/health")
-def get(*args, **kw):
-    return jsonify({"system": "ok"})
