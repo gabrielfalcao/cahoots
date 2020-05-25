@@ -43,7 +43,7 @@ template_json = api.model(
 template_ns = api.namespace("Template API V1", description="Fake NewStore Template API", path="/api/v1/templates")
 
 
-@template_ns.route("/template")
+@template_ns.route("/templates")
 class TemplateListEndpoint(Resource):
     #@oidc.accept_token(True, scopes_required=['template:read'])
     def get(self):
