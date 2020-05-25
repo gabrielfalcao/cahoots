@@ -71,6 +71,14 @@ spec:
         - name: DOCKER_IMAGE
           value: {{ .Values.image.tag }}
 
+      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        name: purge-sessions
+        command: ['/venv/bin/cahoots-in', 'purge-sessions']
+        envFrom:
+          - configMapRef:
+              name: {{ include "cahoots-in.fullname" . }}-env
+
       volumes:
         - name: cahoots-uploads-volume
           persistentVolumeClaim:
