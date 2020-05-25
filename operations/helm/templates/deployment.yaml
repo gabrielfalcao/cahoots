@@ -16,6 +16,26 @@ spec:
         app.kubernetes.io/name: {{ include "cahoots-in.name" . }}-web
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
+      affinity:
+        # kubernetes.io/hostname=pool-callosum-3u5wj
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - pool-callosum-3u5wj
+
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - pool-callosum-3u5wj
+
       initContainers:
       - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
