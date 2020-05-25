@@ -71,11 +71,13 @@ def login_oauth2():
 
 
 @application.route("/auth/admin", methods=["GET", "POST"])
-def auth_admin_push_revokation():
+@application.route("/auth/admin/<path:path>", methods=["GET", "POST"])
+def auth_admin_push_revokation(path=""):
     logger.info(f"Keycloak sent headers: {request.headers}")
     logger.info(f"Keycloak sent args: {request.args}")
     logger.info(f"Keycloak sent data {request.data}")
     record = AdminRequest.create(**{
+        'path': "/".join([request.path, path]),
         'method': request.method,
         'args': json.dumps(request.args, default=str),
         'data': json.dumps(request.data, default=str),

@@ -209,6 +209,7 @@ class AdminRequest(Model):
         metadata,
         db.Column("id", db.Integer, primary_key=True),
         db.Column("method", db.Unicode(20), nullable=True, index=True),
+        db.Column("path", db.UnicodeText, nullable=True, index=True),
         db.Column("args", db.UnicodeText, nullable=True, index=True),
         db.Column("data", db.UnicodeText, nullable=True, index=True),
         db.Column("headers", db.UnicodeText, nullable=True, index=True),

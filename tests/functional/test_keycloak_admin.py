@@ -19,7 +19,7 @@ def test_keycloak_admin_push_get(context):
 def test_keycloak_admin_push_post(context):
     ("POST on /auth/admin should return 200")
 
-    response = context.http.post("/auth/admin")
+    response = context.http.post("/auth/admin/k_push_not_before")
 
     # # When I check the response
 
