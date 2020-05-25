@@ -75,7 +75,7 @@ OIDC_SCOPES = [
     "service:templates",
     "templates:read",
 ]
-
+OIDC_USER_INFO_ENABLED = False
 
 class dbconfig:
     host = os.getenv("POSTGRES_HOST") or "localhost"
