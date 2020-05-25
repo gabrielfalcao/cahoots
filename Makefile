@@ -124,7 +124,7 @@ template:
 	helm dependency update --skip-refresh operations/helm/
 	helm template $(HELM_SET_VARS) operations/helm
 
-deploy: k8s-namespace
+deploy: tests k8s-namespace
 	iterm2 color orange
 	helm template $(HELM_SET_VARS) operations/helm > /dev/null
 	git push
