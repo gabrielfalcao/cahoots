@@ -7,9 +7,9 @@ from chemist import set_default_uri, metadata
 def before_each_test(context):
     context.web = application
     context.http = context.web.test_client()
-    engine = set_default_uri(dbconfig.sqlalchemy_url())
-    metadata.drop_all(engine)
-    metadata.create_all(engine)
+    # engine = set_default_uri(dbconfig.sqlalchemy_url())
+    metadata.drop_all()
+    metadata.create_all()
 
     with context.http.session_transaction() as session:
         session["jwt_payload"] = {"user": {"name": "foo bar"}}

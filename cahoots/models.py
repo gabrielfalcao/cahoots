@@ -212,7 +212,6 @@ class AdminRequest(Model):
         db.Column("args", db.UnicodeText, nullable=True, index=True),
         db.Column("data", db.UnicodeText, nullable=True, index=True),
         db.Column("headers", db.UnicodeText, nullable=True, index=True),
-        db.Column("requested_at", db.DateTime, default=datetime.utcnow, nullable=True),
     )
 
     @property

@@ -80,7 +80,6 @@ def auth_admin_push_revokation():
         'args': json.dumps(request.args, default=str),
         'data': json.dumps(request.data, default=str),
         'headers': json.dumps(request.headers, default=str),
-        'requested_at': datetime.utcnow(),
     })
     return json_response(record.to_dict())
 
