@@ -1,4 +1,3 @@
-import json
 from .helpers import web_test
 
 

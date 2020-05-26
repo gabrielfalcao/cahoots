@@ -23,7 +23,7 @@ def parse_jwt_token(token):
     except Exception as e:
         logger.warning(f"failed to decode JWT while verifying signature: {e}")
         try:
-            middle = bytes(token.split(".")[1], 'utf-8')
+            middle = bytes(token.split(".")[1], "utf-8")
             raw = jwt.api_jws.base64url_decode(middle)
             return json.loads(raw)
         except Exception as e:
@@ -144,6 +144,6 @@ def logout():
     oidc.logout()
     session.clear()
     response = make_response(redirect(request.args.get("next") or url_for("index")))
-    response.delete_cookie('session')
-    response.delete_cookie('oidc_id_token')
+    response.delete_cookie("session")
+    response.delete_cookie("oidc_id_token")
     return response

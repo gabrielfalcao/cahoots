@@ -63,13 +63,7 @@ OIDC_OPENID_REALM = os.getenv(
     "OIDC_OPENID_REALM"
 )  # or 'https://keycloak.fulltest.co/oidc_callback'
 # OIDC_CALLBACK_ROUTE = '/callback_oidc'
-OIDC_SCOPES = [
-    "openid",
-    "email",
-    "profile",
-    "template:write",
-    "template:read",
-]
+OIDC_SCOPES = ["openid", "email", "profile", "template:write", "template:read"]
 OIDC_USER_INFO_ENABLED = False
 
 # --------------------------------
@@ -80,7 +74,8 @@ OIDC_USER_INFO_ENABLED = False
 OIDC_RESOURCE_SERVER_ONLY = False
 # --------------------------------
 
-OIDC_INTROSPECTION_AUTH_METHOD = 'bearer'
+OIDC_INTROSPECTION_AUTH_METHOD = "bearer"
+
 
 class dbconfig:
     host = os.getenv("POSTGRES_HOST") or "localhost"
