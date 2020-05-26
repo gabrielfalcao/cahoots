@@ -30,7 +30,7 @@ parser.add_argument(
     "Authorization",
     location="headers",
     type=inputs.regex("^(Bearer\s+)?\S+$"),
-    help='must be "Bearer <token>" replace `<token>` with a valid JWT-encoded access token',
+    help='Bearer OPAQUE_ACCESS_TOKEN"',
 )
 
 # parser.add_argument('oidc_id_token', location='cookies', help='the id token provided by keycloak')
