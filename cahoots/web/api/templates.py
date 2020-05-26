@@ -46,13 +46,13 @@ template_ns = api.namespace(
 @template_ns.route("/templates")
 @template_ns.expect(parser)
 class TemplateListEndpoint(Resource):
-    @oidc.accept_token(False, scopes_required=["template:read"])
+    @oidc.accept_token(True, scopes_required=["template:read"])
     def get(self):
         templates = Template.all()
         return [u.to_dict() for u in templates]
 
     @template_ns.expect(template_json)
-    # @oidc.accept_token(False, scopes_required=['template:write'])
+    # @oidc.accept_token(True, scopes_required=['template:write'])
     def post(self):
         name = api.payload.get("name")
         content = api.payload.get("content")
@@ -62,7 +62,7 @@ class TemplateListEndpoint(Resource):
         except Exception as e:
             return {"error": str(e)}, 400
 
-    @oidc.accept_token(False, scopes_required=["template:write"])
+    @oidc.accept_token(True, scopes_required=["template:write"])
     def delete(self):
         response = []
         try:
@@ -76,7 +76,7 @@ class TemplateListEndpoint(Resource):
 
 @template_ns.route("/template/<template_id>")
 class TemplateEndpoint(Resource):
-    @oidc.accept_token(False, scopes_required=["template:read"])
+    @oidc.accept_token(True, scopes_required=["template:read"])
     def get(self, template_id):
         template = Template.find_one_by(id=template_id)
         if not template:
@@ -84,7 +84,7 @@ class TemplateEndpoint(Resource):
 
         return template.to_dict()
 
-    @oidc.accept_token(False, scopes_required=["template:write"])
+    @oidc.accept_token(True, scopes_required=["template:write"])
     def delete(self, template_id):
         template = Template.find_one_by(id=template_id)
         if not template:
@@ -93,7 +93,7 @@ class TemplateEndpoint(Resource):
         template.delete()
         return {"deleted": template.to_dict()}
 
-    @oidc.accept_token(False, scopes_required=["template:write"])
+    @oidc.accept_token(True, scopes_required=["template:write"])
     @template_ns.expect(template_json)
     def put(self, template_id):
         template = Template.find_by(id=template_id)
