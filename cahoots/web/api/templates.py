@@ -27,10 +27,9 @@ template_json = api.model(
 
 parser = reqparse.RequestParser()
 parser.add_argument(
-    "Authorization",
-    location="headers",
-    type=inputs.regex("^(Bearer\s+)?\S+$"),
-    help='Bearer OPAQUE_ACCESS_TOKEN"',
+    "access_token",
+    location="args",
+    help='The opaque JWT Acess Token',
 )
 
 # parser.add_argument('oidc_id_token', location='cookies', help='the id token provided by keycloak')
