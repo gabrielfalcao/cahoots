@@ -23,7 +23,8 @@ def parse_jwt_token(token):
     except Exception as e:
         logger.warning(f"failed to decode JWT while verifying signature: {e}")
         try:
-            raw = jwt.api_jws.base64url_decode(token.split(".")[1])
+            middle = bytes(token.split(".")[1], 'utf-8')
+            raw = jwt.api_jws.base64url_decode(middle)
             return json.loads(raw)
         except Exception as e:
             logger.exception(f"could not parse token {token!r}")
