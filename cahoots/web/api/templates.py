@@ -29,7 +29,7 @@ parser = reqparse.RequestParser()
 parser.add_argument(
     "Authorization",
     location="headers",
-    type=inputs.regex("^Bearer\s+\S+$"),
+    type=inputs.regex("^(Bearer\s+)?\S+$"),
     help='must be "Bearer <token>" replace `<token>` with a valid JWT-encoded access token',
 )
 
