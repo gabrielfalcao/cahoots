@@ -78,7 +78,7 @@ OIDC_USER_INFO_ENABLED = True
 OIDC_RESOURCE_SERVER_ONLY = False
 # --------------------------------
 
-OIDC_INTROSPECTION_AUTH_METHOD = "bearer"
+# OIDC_INTROSPECTION_AUTH_METHOD = "bearer"
 
 
 class dbconfig:
