@@ -20,6 +20,11 @@ data:
   POSTGRES_PASSWORD: {{ .Values.postgresql.postgresqlPassword | quote }}
 {{- end }}
 
+# Flask SECRET_KEY
+{{- if .Values.flask.secret_key }}
+  SECRET_KEY: {{ .Values.flask.secret_key | quote }}
+{{- end }}
+
 # Redis
 {{- if .Values.redis.enabled }}
   REDIS_HOST: {{ template "redis.hostname" . }}

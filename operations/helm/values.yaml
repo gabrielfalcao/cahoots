@@ -16,6 +16,9 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+flask:
+  secret_key: '--set-by-makefile--'
+
 service:
   type: ClusterIP
   port: 5000
