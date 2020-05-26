@@ -146,7 +146,7 @@ def logout():
     # Clear session stored data
     oidc.logout()
     session.clear()
-    response = make_response(redirect(request.args.get("next") or url_for("index")))
+    response = make_response(redirect(request.args.get("next") or "https://id.t.newstore.net/auth/realms/gabriel-NA-43928/protocol/openid-connect/logout"))
     response.delete_cookie("session")
     response.delete_cookie("oidc_id_token")
     return response
