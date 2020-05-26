@@ -3,7 +3,7 @@ import json
 import logging
 import jwt
 
-from flask import redirect, session, request, g, url_for
+from flask import redirect, session, request, g, url_for, make_response
 from datetime import datetime
 from cahoots.models import AdminRequest
 from cahoots.utils import json_response
@@ -143,4 +143,7 @@ def logout():
     # Clear session stored data
     oidc.logout()
     session.clear()
-    return redirect(request.args.get("next") or url_for("index"))
+    response = make_response(redirect(request.args.get("next") or url_for("index")))
+    response.delete_cookie('session')
+    response.delete_cookie('oidc_id_token')
+    return response
