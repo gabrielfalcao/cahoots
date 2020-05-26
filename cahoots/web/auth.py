@@ -4,7 +4,6 @@ import logging
 import jwt
 
 from flask import redirect, session, request, g, url_for, make_response
-from datetime import datetime
 from cahoots.models import AdminRequest
 from cahoots.utils import json_response
 from cahoots.web import db
@@ -16,6 +15,8 @@ logger = logging.getLogger(__name__)
 
 
 def parse_jwt_token(token):
+    logger.info(f"trying to parse {token!r} ({type(token)})")
+
     if not token:
         return {}
     try:
@@ -27,7 +28,7 @@ def parse_jwt_token(token):
             raw = jwt.api_jws.base64url_decode(middle)
             return json.loads(raw)
         except Exception as e:
-            logger.exception(f"could not parse token {token!r}")
+            logger.exception(f"could not parse token {token!r} ({type(token)})")
             return {"error": str(e), "token": token}
 
 
