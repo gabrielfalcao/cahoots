@@ -604,7 +604,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "roles": "[{\"id\":\"store-owner\",\"required\":false},{\"id\":\"inventory-associate\",\"required\":false},{\"id\":\"sales-associate\",\"required\":false}]"
+              "roles": "[{\"id\":\"sales-associate\",\"required\":false},{\"id\":\"inventory-associate\",\"required\":false},{\"id\":\"store-owner\",\"required\":false}]"
             }
           },
           {
