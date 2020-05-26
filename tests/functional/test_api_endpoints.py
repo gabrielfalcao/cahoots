@@ -18,7 +18,7 @@ def test_list_templates_without_authentication(context):
 
 
 @web_test
-def test_create_template(context):
+def test_create_template_without_authentication(context):
     ("POST on /api/v1/templates/templates should return a json ")
 
     # Given that I perform a POST /api/v1/templates/template
@@ -33,5 +33,5 @@ def test_create_template(context):
     # When I check the response
     response.headers.should.have.key("Content-Type").being.equal("application/json")
 
-    # And check if the status was 201
-    response.status_code.should.equal(201)
+    # And check if the status was 401
+    response.status_code.should.equal(401)
