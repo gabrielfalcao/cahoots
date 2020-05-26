@@ -1,0 +1,41 @@
+interactions:
+- request:
+    body: token=eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJVYjVzTjVPZzlsU2FYeUpzWWxrNXh2aE5sTEx3X3c5SGtaRUg3YlJub0U0In0.eyJqdGkiOiIwOWUzOGM4Ni0xYzczLTQxODMtOWYwNi1mMmUxMTJhZDI0MmIiLCJleHAiOjE1OTA0NjA3NDcsIm5iZiI6MCwiaWF0IjoxNTkwNDU5NTQ2LCJpc3MiOiJodHRwczovL2lkLnQubmV3c3RvcmUubmV0L2F1dGgvcmVhbG1zL2dhYnJpZWwtTkEtNDM5MjgiLCJzdWIiOiJlMjhmYWY1MC0yMWMyLTRlY2QtYjRhNi1jZDI2N2JjODY3M2UiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJmYWtlLW5ld3N0b3JlLWFwaS12MSIsImF1dGhfdGltZSI6MTU5MDQ1OTU0Niwic2Vzc2lvbl9zdGF0ZSI6ImVjYTBmNjU2LWE1MWMtNDExNy1iMDI5LWQ5YWM5MTA3NzI0YSIsImFjciI6IjEiLCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIGVtYWlsIHRlbXBsYXRlOnJlYWQiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsIm5hbWUiOiJzYWxlcy1hc3NvY2lhdGUgc2FsZXMtYXNzb2NpYXRlIiwicHJlZmVycmVkX3VzZXJuYW1lIjoic2FsZXMtYXNzb2NpYXRlIiwiZ2l2ZW5fbmFtZSI6InNhbGVzLWFzc29jaWF0ZSIsImZhbWlseV9uYW1lIjoic2FsZXMtYXNzb2NpYXRlIiwiZW1haWwiOiJzYWxlcy1hc3NvY2lhdGVAa2V5Y2xvYWsuZnVsbHRlc3QuY28ifQ.f-GSnZ3HKkaN98XSCzIYRbv-UVb-6YAd-0HZtlDFtmQOW-AXZz32eBHrZNVsZv65OtHGdZJ_pfG7dpudkDQhNqfhXXzUONnT9FlT196s42wyFzETN1OWU_DA_EycfcRXwPDlKY2OriGz1BmT224oP2i5Z2NWl-5HcBj_zsCYlR-2khx8VPq6VvMirxyL7MfSCW_YdBLzqCcvGKE8HQIXI9WKNBDq0beP-mPNbS5huzivDk61XGHEMQqa1z_ROu4X-GiDS24KA-1xH4Gpvx5lApQf3G33vQihboQAF7S-XjgsiblMvr62Ea7aFqi-olBeLlt5749U4SkCAGXyrRdBPQ&token_type_hint=access_token&client_id=fake-newstore-api-v1&client_secret=da341d0c-eaa4-460b-af6b-dac5de6443b5
+    headers:
+      accept-encoding:
+      - gzip, deflate
+      content-type:
+      - application/x-www-form-urlencoded
+      user-agent:
+      - Python-httplib2/0.17.3 (gzip)
+    method: POST
+    uri: https://id.t.newstore.net/auth/realms/gabriel-NA-43928/protocol/openid-connect/token/introspect
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA3xRSZLcIBD8SgfnpiUQWk+2H+AvKEpQzOBGS1CoPT0T83eXHJ6Dl/aFoMiszIzk
+        TXzLQQyi7LHqbNdIZdtKGtVVsvdlI71GpTQ4bfQkzgJfNjGoui9NU7amPYtl8mIozyJA/gXUfW0a
+        fiBi2eecNxqKIrhLviz4nfKakC+5gD0/FwkhzlQ8wZQCRvn1szRVrzs2on3iddSdB1+XUiurpUHr
+        5GSgkdbppp04blshk/OdU4kvCAkTj/B6jB6uKD8sJWxB3tQBsu+Yw4y/xyUkCusyUoaMh7OF0jd1
+        I6FWlvtQrZxK3UvXg+1V2bbaAKstcAgJgogkgWi1XASe/piZ+BRuuIz/pjPsYQ7x/hjfEnpMCd24
+        E6aHNJwhxL+RT1e827jC9eL3GDNSvtj1gz7eMAUf0InBQyTkimxijaMssut2OPG5BHfa0upDxNPP
+        vVPGeYusPvAvOibbGHDJY3CPy/9veLCZSxJDTju+/wAAAP//AwB3IspCmAIAAA==
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Tue, 26 May 2020 02:27:06 GMT
+      Server:
+      - nginx/1.17.10
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1
