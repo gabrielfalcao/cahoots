@@ -46,7 +46,7 @@ template_ns = api.namespace(
 @template_ns.route("/templates")
 @template_ns.expect(parser)
 class TemplateListEndpoint(Resource):
-    @boidc.accept_token(False, scopes_required=["template:read"])
+    @oidc.accept_token(False, scopes_required=["template:read"])
     def get(self):
         templates = Template.all()
         return [u.to_dict() for u in templates]

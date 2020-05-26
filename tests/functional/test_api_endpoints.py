@@ -1,12 +1,13 @@
-# import vcr
+import vcr
 import json
 from .helpers import web_test
 
 
-# @vcr.use_cassette('fixtures/vcr_cassettes/test_list_templates.yaml')
+
 @web_test
+@vcr.use_cassette('fixtures/vcr_cassettes/test_list_templates.yaml')
 def test_list_templates_without_authentication(context):
-    ("GET on /api/v1/templates/templates should return 401")
+    ("GET on /api/v1/templates/templates should return 200")
 
     # Given that I perform a GET /api/v1/templates/template
     response = context.http.get("/api/v1/templates/templates")
@@ -14,8 +15,8 @@ def test_list_templates_without_authentication(context):
     # When I check the response
     response.headers.should.have.key("Content-Type").being.equal("application/json")
 
-    # And check if the status was 401
-    response.status_code.should.equal(401)
+    # And check if the status was 200
+    response.status_code.should.equal(200)
 
 
 @web_test
