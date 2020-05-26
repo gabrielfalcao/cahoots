@@ -10,9 +10,9 @@ export OAUTH2_ACCESS_TOKEN_URL	:= https://id.t.newstore.net/auth/realms/gabriel-
 export OAUTH2_AUTHORIZE_URL	:= https://id.t.newstore.net/auth/realms/gabriel-NA-43928/protocol/openid-connect/auth
 export OAUTH2_BASE_URL		:= https://id.t.newstore.net/auth/realms/gabriel-NA-43928/protocol/openid-connect/
 export OAUTH2_CALLBACK_URL	:= https://keycloak.fulltest.co/callback/oauth2
-export OAUTH2_CLIENT_ID		:= keycloak-fulltest-co-1
+export OAUTH2_CLIENT_ID		:= fake-newstore-api-v1
 export OAUTH2_CLIENT_SCOPE	:= openid profile email
-export OAUTH2_CLIENT_SECRET	:= 22aa51e7-3123-4ec5-8406-a66aa43b7c1a
+export OAUTH2_CLIENT_SECRET	:= da341d0c-eaa4-460b-af6b-dac5de6443b5
 export OAUTH2_DOMAIN		:= id.t.newstore.net
 export OAUTH2_CLIENT_AUDIENCE	:= https://keycloak.fulltest.co/
 export SECRET_KEY		:= $(shell 2>/dev/null dd bs=128 count=1 if=/dev/urandom | base64 | head -1)
