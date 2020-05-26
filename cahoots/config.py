@@ -67,8 +67,7 @@ OIDC_SCOPES = [
     "openid",
     "email",
     "profile",
-    "username",
-    "service:templates",
+    "template:write",
     "template:read",
 ]
 OIDC_USER_INFO_ENABLED = False
