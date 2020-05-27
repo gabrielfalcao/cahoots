@@ -13,13 +13,13 @@
         </div>
       </div>
       {% else %}
-      <div class="panel panel-danger">
+      <div class="panel panel-info">
         <div class="panel-heading">
           <h3 class="panel-title">Not logged in</h3>
         </div>
         <div class="panel-body">
-          <h3>Please <a href="{{ url_for('login_oauth2') }}">login</a> first</h3>
-          <h4>or <a href="{{ url_for('logout') }}">logout</a> to force-flush the cookies</h4>
+          <p>Browse the <a href="/api/">API</a> or <a href="{{ url_for('login_oauth2') }}">authenticate with keycloak.</a></p>
+          <p>In case of problems with your session, just <a href="{{ url_for('logout') }}">logout</a> to force-flush the cookies.</p>
         </div>
       </div>
       {% endif  %}
