@@ -96,7 +96,7 @@ class TemplateEndpoint(Resource):
     @oidc.accept_token(True, scopes_required=["template:write"])
     @template_ns.expect(template_json)
     def put(self, template_id):
-        template = Template.find_by(id=template_id)
+        template = Template.find_one_by(id=template_id)
         if not template:
             return {"error": "template not found"}, 404
 
