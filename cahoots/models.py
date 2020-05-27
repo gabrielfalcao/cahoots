@@ -195,7 +195,11 @@ class Template(Model):
 
     @property
     def content(self):
-        return json.loads(self.get("content", "null"))
+        try:
+            return json.loads(self.get("content", "null"), default=str)
+        except Exception:
+            logger.exception(f'{self}.content property')
+            return self.get("content")
 
     def to_dict(self):
         data = self.serialize()
