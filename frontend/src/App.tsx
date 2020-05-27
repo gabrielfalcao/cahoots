@@ -1,65 +1,54 @@
-import React, {
-    useState // useEffect,
-    // useCallback,
-    // MouseEvent
-} from "react";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-// import Button from "react-bootstrap/Button";
-// import ButtonGroup from "react-bootstrap/ButtonGroup";
-// import ListGroup from "react-bootstrap/ListGroup";
-// import ProgressBar from "react-bootstrap/ProgressBar";
-// import Spinner from "react-bootstrap/Spinner";
-import Col from "react-bootstrap/Col";
-import Card from "react-bootstrap/Card";
-// import Authenticate from "react-openidconnect";
+import React from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { LinkContainer } from "react-router-bootstrap";
+import Navbar from "react-bootstrap/Navbar";
+import Nav from "react-bootstrap/Nav";
 
-// var OidcSettings = {
-//     authority:
-//         "https://id.t.newstore.net/auth/realms/gabriel-NA-43928/protocol/openid-connect/auth",
-//     client_id: "fake-nom",
-//     redirect_uri: `${window.location}`,
-//     response_type: "id_token token",
-//     scope: "openid profile roles template:read template:write",
-//     post_logout_redirect_uri: `${window.location}`
-// };
+import Home from "./pages/home";
+import OAuth2Callback from "./pages/callback";
+import Login from "./pages/login";
+import Logout from "./pages/logout";
 
-const BACKEND_BASE_URL = "https://keycloak-fulltestco.ngrok.io";
-
-// interface File {
-//     readonly name: string;
-//     readonly size: number;
-// }
-
-// const FILE_SERVER_BASE_URL =
-//     document.location.protocol === "http:"
-//         ? "https://localhost:5000"
-//         : "https://keycloak.fulltest.co";
-
-function App() {
-    const [error] = useState(null);
-
+export default function App() {
     return (
-        <Container fluid="md">
-            {error !== null ? (
-                <Row>
-                    <Col md={12}>
-                        <Card bg={"danger"} text="white">
-                            <Card.Body>
-                                <Card.Title>Error</Card.Title>
-                                <Card.Text>{`${error}`}</Card.Text>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                </Row>
-            ) : null}
-            <Row>
-                <Col>
-                    <a href={`${BACKEND_BASE_URL}/login/oauth2`}>Login</a>
-                </Col>
-            </Row>
-        </Container>
+        <Router>
+            <Navbar bg="light" expand="lg" sticky="top">
+                <LinkContainer to="/">
+                    <Navbar.Brand>Fake NOM</Navbar.Brand>
+                </LinkContainer>
+                <Navbar.Toggle aria-controls="fakenom-navbar-nav" />
+
+                <Navbar.Collapse
+                    className="justify-content-end"
+                    id="fakenom-navbar-nav"
+                >
+                    <Nav className="mr-auto">
+                        <LinkContainer to="/">
+                            <Nav.Link>Home</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/login">
+                            <Nav.Link>Login</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/logout">
+                            <Nav.Link>Logout</Nav.Link>
+                        </LinkContainer>
+                    </Nav>
+                </Navbar.Collapse>
+            </Navbar>
+            <Switch>
+                <Route path="/auth/callback">
+                    <OAuth2Callback />
+                </Route>
+                <Route path="/login">
+                    <Login />
+                </Route>
+                <Route path="/Logout">
+                    <Logout />
+                </Route>
+                <Route path="/">
+                    <Home />
+                </Route>
+            </Switch>
+        </Router>
     );
 }
-
-export default App;
