@@ -25,11 +25,7 @@ template_json = api.model(
 )
 
 parser = reqparse.RequestParser()
-parser.add_argument(
-    "access_token",
-    location="args",
-    help='The opaque JWT Acess Token',
-)
+parser.add_argument("access_token", location="args", help="The opaque JWT Acess Token")
 
 # parser.add_argument('oidc_id_token', location='cookies', help='the id token provided by keycloak')
 # parser.add_argument('session', location='cookies', help='the session id containing the state of authentication')
@@ -50,7 +46,7 @@ class TemplateListEndpoint(Resource):
         return [u.to_dict() for u in templates]
 
     @template_ns.expect(template_json)
-    @oidc.accept_token(True, scopes_required=['template:write'])
+    @oidc.accept_token(True, scopes_required=["template:write"])
     def post(self):
         name = api.payload.get("name")
         content = api.payload.get("content")

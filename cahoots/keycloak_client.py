@@ -4,4 +4,4 @@ import requests
 # POST /{realm}/users/{id}/logout
 # Parameters
 
-#https://www.keycloak.org/docs-api/5.0/rest-api/index.html#_logout
+# https://www.keycloak.org/docs-api/5.0/rest-api/index.html#_logout
