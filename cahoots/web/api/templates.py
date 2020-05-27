@@ -74,6 +74,7 @@ class TemplateListEndpoint(Resource):
 
 
 @template_ns.route("/template/<template_id>")
+@template_ns.expect(parser)
 class TemplateEndpoint(Resource):
     @oidc.accept_token(True, scopes_required=["template:read"])
     def get(self, template_id):
