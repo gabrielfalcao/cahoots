@@ -201,11 +201,6 @@ class Template(Model):
             logger.exception(f'{self}.content property')
             return self.get("content")
 
-    def to_dict(self):
-        data = self.serialize()
-        data["content"] = self.content
-        return data
-
 
 class AdminRequest(Model):
     table = db.Table(
@@ -236,10 +231,10 @@ class AdminRequest(Model):
     def headers(self):
         return json.loads(self.get("headers", "{}"))
 
-    def to_dict(self):
-        data = self.serialize()
-        data["headers"] = self.headers
-        data["data"] = self.data
-        data["args"] = self.args
-        data["jwt_token"] = self.jwt_token
-        return data
+    # def to_dict(self):
+    #     data = self.serialize()
+    #     data["headers"] = self.headers
+    #     data["data"] = self.data
+    #     data["args"] = self.args
+    #     data["jwt_token"] = self.jwt_token
+    #     return data
