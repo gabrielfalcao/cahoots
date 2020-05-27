@@ -63,7 +63,7 @@ def login_oauth2():
 @application.route("/auth/admin/<path:path>", methods=["GET", "POST"])
 def auth_admin_push_revokation(path=""):
     logger.info(f"Keycloak sent {request.method}: {request.path}")
-    logger.info(f"Keycloak sent {json.dumps(request.headers, indent=4)}")
+    logger.info(f"Keycloak sent {json.dumps(request.headers, indent=4, default=str)}")
     logger.info(f"Keycloak sent args: {request.args!r}")
     logger.info(f"Keycloak sent data {request.data!r}")
     jwt_token = parse_jwt_token(request.data)
@@ -87,7 +87,6 @@ def is_authenticated():
 @application.route("/logout")
 def logout():
     response = make_response(redirect(request.args.get("next") or url_for("index")))
-    response.delete_cookie("session_id")
     response.delete_cookie("session")
     response.delete_cookie("oidc_id_token")
     oidc.logout()
