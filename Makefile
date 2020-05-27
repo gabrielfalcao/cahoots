@@ -176,6 +176,9 @@ setup-helm:
 tunnel:
 	ngrok http --subdomain=keycloak-fulltestco 5000
 
+tunnel-react:
+	ngrok http --subdomain=reactkeycloak 3000
+
 clean:
 	rm -rf .venv
 
