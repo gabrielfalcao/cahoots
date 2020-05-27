@@ -21,6 +21,7 @@ export default class OAuth2Callback extends Component<{}, CallbackState> {
         super(props);
 
         this.authService = new AuthService();
+        this.state = { user: null };
     }
 
     public componentDidMount() {
@@ -28,6 +29,7 @@ export default class OAuth2Callback extends Component<{}, CallbackState> {
             .handleCallback()
             .then(user => {
                 this.setState({ user });
+                console.log("callback user", user);
                 toastr.info(`callback succeedded`);
             })
             .catch(error => {
@@ -36,14 +38,21 @@ export default class OAuth2Callback extends Component<{}, CallbackState> {
     }
 
     render() {
-        if (this.state.user !== null) {
+        const { user } = this.state;
+        console.log(user);
+        if (user !== null) {
             return <Redirect to="/" />;
         }
 
         return (
-            <Container fluid="md">
+            <Container>
                 <Row>
-                    <Col md={12}>
+                    <Col>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+
                         <Spinner animation="border" role="status">
                             <span className="sr-only">Loading...</span>
                         </Spinner>

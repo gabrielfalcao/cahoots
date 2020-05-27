@@ -36,7 +36,7 @@ export default function App() {
                 </Navbar.Collapse>
             </Navbar>
             <Switch>
-                <Route path="/auth/callback">
+                <Route path="/oauth2/callback">
                     <OAuth2Callback />
                 </Route>
                 <Route path="/login">

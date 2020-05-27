@@ -28,14 +28,14 @@ export default class Login extends Component<{}, LoginState> {
         this.state = { user: null, error: null };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.getUser();
     }
     public getUser = () => {
         this.authService
             .getUser()
             .then(user => {
-                console.log("user", user);
+                console.log("login user", user);
                 if (user) {
                     toastr.success(
                         "User has been successfully loaded from store."
@@ -55,8 +55,6 @@ export default class Login extends Component<{}, LoginState> {
     public login = () => {
         this.authService.login();
     };
-
-    componentDidMount() { }
 
     render() {
         return (
