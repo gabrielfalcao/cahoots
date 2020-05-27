@@ -15,7 +15,6 @@ logger = logging.getLogger(__name__)
 template_json = api.model(
     "Template",
     {
-        "id": fields.String(required=False, description="the template id"),
         "name": fields.String(
             required=True, description="name unique name for this template"
         ),

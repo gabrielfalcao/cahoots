@@ -15,7 +15,6 @@ logger = logging.getLogger(__name__)
 admin_request_json = api.model(
     "AdminRequest",
     {
-        "id": fields.String(required=True, description="the admin_request id"),
         "method": fields.String(required=True),
         "path": fields.String(required=True),
         "args": fields.String(required=True),
