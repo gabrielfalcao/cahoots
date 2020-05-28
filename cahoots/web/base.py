@@ -16,6 +16,7 @@ def backend():
 
 
 @application.route("/", methods=["GET"])
-def index():
-    return render_template("token-debug.html")
-    # return render_template("index.html")
+@application.route("/app", methods=["GET"])
+@application.route("/app/<path:path>", methods=["GET"])
+def index(path=None):
+    return render_template("index.html")
