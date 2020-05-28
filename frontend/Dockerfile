@@ -9,6 +9,7 @@ RUN npm install
 
 ADD . /usr/src/app
 
+RUN npm install -g tsc react-scripts create-react-app
 RUN npm run build
 
 CMD [ "npm", "start" ]
