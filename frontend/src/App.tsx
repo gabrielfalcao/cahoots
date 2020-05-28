@@ -44,6 +44,32 @@ class App extends Component<AppProps, AppState> {
     };
     render() {
         const { auth } = this.props;
+
+        function AuthenticatedRoute({
+            children,
+            ...rest
+        }: {
+            [key: string]: any;
+        }) {
+            return (
+                <Route
+                    {...rest}
+                    render={({ location }) =>
+                        !needs_login(auth) ? (
+                            children
+                        ) : (
+                                <Redirect
+                                    to={{
+                                        pathname: "/login",
+                                        state: { from: location }
+                                    }}
+                                />
+                            )
+                    }
+                />
+            );
+        }
+
         return (
             <Router>
                 <Navbar bg="light" expand="lg" sticky="top">
@@ -82,16 +108,12 @@ class App extends Component<AppProps, AppState> {
                     <Route path="/login">
                         <Login />
                     </Route>
-                    <Route path="/Logout">
+                    <Route path="/logout">
                         <Logout />
                     </Route>
-                    <Route path="/">
-                        {needs_login(auth) ? (
-                            <Redirect to="/login" />
-                        ) : (
-                                <Home />
-                            )}
-                    </Route>
+                    <AuthenticatedRoute path="/">
+                        <Home />
+                    </AuthenticatedRoute>
                 </Switch>
             </Router>
         );

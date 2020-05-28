@@ -1,7 +1,9 @@
 import React, { Component } from "react";
+import PropTypes, { InferProps } from "prop-types";
 
 import Container from "react-bootstrap/Container";
-import * as toastr from "toastr";
+// import * as toastr from "toastr";
+import { Redirect } from "react-router-dom";
 
 import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
@@ -10,54 +12,38 @@ import Modal from "react-bootstrap/Modal";
 import { AuthService } from "../auth";
 import { ComponentWithStore } from "../ui";
 
-// the clock's state has one field: The current time, based upon the
-// JavaScript class Date
-type LoginState = {
-    user: any;
-    error: Error | null;
-};
-
-class Login extends Component<{}, LoginState> {
+class Login extends Component<{}, any> {
     public authService: AuthService;
-    private shouldCancel: boolean;
+    static propTypes = {
+        auth: PropTypes.shape({
+            scope: PropTypes.string,
+            profile: PropTypes.shape({
+                preferred_name: PropTypes.string
+            })
+        })
+    };
+    static defaultProps: InferProps<typeof Login.propTypes> = {
+        auth: {
+            scope: null,
+            profile: null
+        }
+    };
 
     constructor(props: any) {
         super(props);
 
         this.authService = new AuthService();
-        this.shouldCancel = false;
-        this.state = { user: null, error: null };
     }
 
-    componentDidMount() {
-        this.getUser();
-    }
-    public getUser = () => {
-        this.authService
-            .getUser()
-            .then(user => {
-                console.log("login user", user);
-                if (user) {
-                    toastr.success(
-                        "User has been successfully loaded from store."
-                    );
-                } else {
-                    toastr.info("You are not logged in.");
-                }
-
-                if (!this.shouldCancel) {
-                    this.setState({ user });
-                }
-            })
-            .catch(error => {
-                this.setState({ error });
-            });
-    };
     public login = () => {
         this.authService.login();
     };
 
     render() {
+        const { auth }: InferProps<typeof Login.propTypes> = this.props;
+        if (auth.profile) {
+            return <Redirect to="/" />;
+        }
         return (
             <Container fluid="md">
                 <Row>
