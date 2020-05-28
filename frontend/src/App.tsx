@@ -92,6 +92,9 @@ class App extends Component<AppProps, AppState> {
                                         <LinkContainer to="/">
                                             <Nav.Link>Home</Nav.Link>
                                         </LinkContainer>
+                                        <Nav.Link href="/api">
+                                            Fake NewStore API v1
+									</Nav.Link>
 
                                         <LinkContainer to="/logout">
                                             <Nav.Link>Logout</Nav.Link>
