@@ -8,6 +8,7 @@ import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Modal from "react-bootstrap/Modal";
 import { AuthService } from "../auth";
+import { ComponentWithStore } from "../ui";
 
 // the clock's state has one field: The current time, based upon the
 // JavaScript class Date
@@ -16,7 +17,7 @@ type LoginState = {
     error: Error | null;
 };
 
-export default class Login extends Component<{}, LoginState> {
+class Login extends Component<{}, LoginState> {
     public authService: AuthService;
     private shouldCancel: boolean;
 
@@ -92,3 +93,5 @@ export default class Login extends Component<{}, LoginState> {
         );
     }
 }
+
+export default ComponentWithStore(Login);

@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+
 import { Redirect } from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import * as toastr from "toastr";
@@ -8,13 +10,14 @@ import Col from "react-bootstrap/Col";
 import Spinner from "react-bootstrap/Spinner";
 import { AuthService } from "../auth";
 
-// the clock's state has one field: The current time, based upon the
-// JavaScript class Date
+type CallbackProps = {
+    setUser: any;
+};
 type CallbackState = {
     user: any;
 };
 
-export default class OAuth2Callback extends Component<{}, CallbackState> {
+class OAuth2Callback extends Component<CallbackProps, CallbackState> {
     public authService: AuthService;
 
     constructor(props: any) {
@@ -29,6 +32,7 @@ export default class OAuth2Callback extends Component<{}, CallbackState> {
             .handleCallback()
             .then(user => {
                 this.setState({ user });
+                this.props.setUser(user);
                 console.log("callback user", user);
                 toastr.info(`callback succeedded`);
             })
@@ -62,3 +66,16 @@ export default class OAuth2Callback extends Component<{}, CallbackState> {
         );
     }
 }
+
+function setUser(user: any) {
+    return {
+        type: "NEW_AUTHENTICATION",
+        user
+    };
+}
+export default connect(
+    state => {
+        return { ...state };
+    },
+    { setUser }
+)(OAuth2Callback);

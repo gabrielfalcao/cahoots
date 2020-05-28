@@ -7,8 +7,9 @@ import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Modal from "react-bootstrap/Modal";
 import { AuthService } from "../auth";
+import { ComponentWithStore } from "../ui";
 
-export default class Logout extends Component<{}, any> {
+class Logout extends Component<{}, any> {
     public authService: AuthService;
 
     constructor(props: any) {
@@ -44,3 +45,4 @@ export default class Logout extends Component<{}, any> {
         );
     }
 }
+export default ComponentWithStore(Logout);

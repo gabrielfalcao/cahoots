@@ -1,5 +1,15 @@
-import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+
+import {
+    BrowserRouter as Router,
+    Route,
+    Switch,
+    Redirect
+} from "react-router-dom";
+/* import { NavLink } from "react-router-dom";*/
+// import { ComponentWithStore } from "./ui";
+
 import { LinkContainer } from "react-router-bootstrap";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
@@ -8,47 +18,83 @@ import Home from "./pages/home";
 import OAuth2Callback from "./pages/callback";
 import Login from "./pages/login";
 import Logout from "./pages/logout";
+import { ComponentWithStore } from "./ui";
 
-export default function App() {
-    return (
-        <Router>
-            <Navbar bg="light" expand="lg" sticky="top">
-                <LinkContainer to="/">
-                    <Navbar.Brand>Fake NOM</Navbar.Brand>
-                </LinkContainer>
-                <Navbar.Toggle aria-controls="fakenom-navbar-nav" />
+type AppState = {
+    user: any;
+    error: Error | null;
+};
+type AppProps = {
+    auth: any;
+};
 
-                <Navbar.Collapse
-                    className="justify-content-end"
-                    id="fakenom-navbar-nav"
-                >
-                    <Nav className="mr-auto">
-                        <LinkContainer to="/">
-                            <Nav.Link>Home</Nav.Link>
-                        </LinkContainer>
-                        <LinkContainer to="/login">
-                            <Nav.Link>Login</Nav.Link>
-                        </LinkContainer>
-                        <LinkContainer to="/logout">
-                            <Nav.Link>Logout</Nav.Link>
-                        </LinkContainer>
-                    </Nav>
-                </Navbar.Collapse>
-            </Navbar>
-            <Switch>
-                <Route path="/oauth2/callback">
-                    <OAuth2Callback />
-                </Route>
-                <Route path="/login">
-                    <Login />
-                </Route>
-                <Route path="/Logout">
-                    <Logout />
-                </Route>
-                <Route path="/">
-                    <Home />
-                </Route>
-            </Switch>
-        </Router>
-    );
+function needs_login(auth: any) {
+    if (!auth) {
+        return true;
+    }
+    if (!auth.scope) {
+        return true;
+    }
+    return typeof auth.scope !== "string";
 }
+
+class App extends Component<AppProps, AppState> {
+    static propTypes = {
+        auth: PropTypes.object
+    };
+    render() {
+        const { auth } = this.props;
+        return (
+            <Router>
+                <Navbar bg="light" expand="lg" sticky="top">
+                    <LinkContainer to="/">
+                        <Navbar.Brand>Fake NOM</Navbar.Brand>
+                    </LinkContainer>
+                    <Navbar.Toggle aria-controls="fakenom-navbar-nav" />
+
+                    <Navbar.Collapse
+                        className="justify-content-end"
+                        id="fakenom-navbar-nav"
+                    >
+                        <Nav>
+                            {needs_login(auth) ? (
+                                <LinkContainer to="/login">
+                                    <Nav.Link>Login</Nav.Link>
+                                </LinkContainer>
+                            ) : (
+                                    <React.Fragment>
+                                        <LinkContainer to="/">
+                                            <Nav.Link>Home</Nav.Link>
+                                        </LinkContainer>
+
+                                        <LinkContainer to="/logout">
+                                            <Nav.Link>Logout</Nav.Link>
+                                        </LinkContainer>
+                                    </React.Fragment>
+                                )}
+                        </Nav>
+                    </Navbar.Collapse>
+                </Navbar>
+                <Switch>
+                    <Route path="/oauth2/callback">
+                        <OAuth2Callback />
+                    </Route>
+                    <Route path="/login">
+                        <Login />
+                    </Route>
+                    <Route path="/Logout">
+                        <Logout />
+                    </Route>
+                    <Route path="/">
+                        {needs_login(auth) ? (
+                            <Redirect to="/login" />
+                        ) : (
+                                <Home />
+                            )}
+                    </Route>
+                </Switch>
+            </Router>
+        );
+    }
+}
+export default ComponentWithStore(App);
