@@ -1,15 +1,15 @@
 FROM node:12.16.1-alpine
 
-# Create Directory for the Container
+RUN npm install --silent -g typescript react-scripts create-react-app
+RUN npm install --silent -g npm eslint yarn
+
 WORKDIR /usr/src/app
-# Only copy the package.json file to work directory
+
 COPY package.json .
-# Install all Packages
-RUN npm install
+RUN npm install --silent
 
 ADD . /usr/src/app
 
-RUN npm install -g tsc react-scripts create-react-app
 RUN npm run build
 
 CMD [ "npm", "start" ]
