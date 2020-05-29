@@ -25,6 +25,7 @@
     "redux": "^4.0.5",
     "redux-localstorage": "^0.4.1",
     "redux-localstorage-simple": "^2.2.0",
+    "restful-react": "^12.0.0",
     "superagent": "5.2.2",
     "toastr": "2.1.4"
   },

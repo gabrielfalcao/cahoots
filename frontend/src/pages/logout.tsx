@@ -35,9 +35,15 @@ class Logout extends Component<LogoutProps> {
     }
 
     public logout = () => {
-        this.authService.logout().then(() => {
-            this.props.logout();
-        });
+        this.authService
+            .logout()
+            .then(() => {
+                this.props.logout();
+            })
+            .catch(error => {
+                console.log(error);
+                this.props.logout();
+            });
     };
 
     render() {
