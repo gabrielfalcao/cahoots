@@ -16,6 +16,9 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+flask:
+  secret_key: '--set-by-makefile--'
+
 service:
   type: ClusterIP
   port: 5000
@@ -95,7 +98,7 @@ postgresql:
     repository: postgres
     tag: 10.6
 
-  postgresqlDataDir: /cahoots.in/data/postgresql-10.6/pgdata
+  postgresqlDataDir: /cahoots.in/data/postgresql-10.6/pgdata-2020-05-19
   persistence:
     enabled: true
     mountPath: /cahoots.in/data/postgresql-10.6

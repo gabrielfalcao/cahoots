@@ -17,6 +17,8 @@ if REDIS_HOST:
     )
 else:
     SESSION_TYPE = "filesystem"
+    SESSION_FILE_DIR = "/tmp/flask-session"
+
 
 # set this to true when serving the application via HTTPS or else the
 # flask-restful routes won't show up on swagger.
@@ -31,8 +33,7 @@ GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 
 OAUTH2_DOMAIN = os.getenv("OAUTH2_DOMAIN") or "id.t.newstore.net"
 OAUTH2_CALLBACK_URL = (
-    os.getenv("OAUTH2_CALLBACK_URL")
-    or "https://keycloak.fulltest.co/callback/oauth2"
+    os.getenv("OAUTH2_CALLBACK_URL") or "https://keycloak.fulltest.co/callback/oauth2"
 )
 
 # https://id.t.newstore.net/admin/master/console/#/realms/gabriel-NA-43928/clients/c75308f7-99e9-4b18-aeca-6e742a0b361d/credentials
@@ -46,16 +47,11 @@ OAUTH2_ACCESS_TOKEN_URL = (
     os.getenv("OAUTH2_ACCESS_TOKEN_URL") or f"{OAUTH2_BASE_URL}/token"
 )
 OAUTH2_AUTHORIZE_URL = os.getenv("OAUTH2_AUTHORIZE_URL") or "{OAUTH2_BASE_URL}/auth"
-OAUTH2_CLIENT_SCOPE = (
-    os.getenv("OAUTH2_CLIENT_SCOPE")
-    or "openid profile email roles role_list profile picture email_verified http://newstore/flask-test http://newstore/newstore_id"
-)
+OAUTH2_CLIENT_SCOPE = os.getenv("OAUTH2_CLIENT_SCOPE") or "openid profile email"
 OAUTH2_CLIENT_AUDIENCE = (
     os.getenv("OAUTH2_CLIENT_AUDIENCE") or "https://keycloak.fulltest.co/"
 )
-DOCKER_IMAGE = (
-    os.getenv("DOCKER_IMAGE") or "latest"
-)
+DOCKER_IMAGE = os.getenv("DOCKER_IMAGE") or "latest"
 
 OIDC_CLIENT_SECRETS = os.getenv("OIDC_CLIENT_SECRETS_JSON_PATH") or str(
     module_path.joinpath("client_secrets.json")
@@ -63,19 +59,26 @@ OIDC_CLIENT_SECRETS = os.getenv("OIDC_CLIENT_SECRETS_JSON_PATH") or str(
 OIDC_ID_TOKEN_COOKIE_SECURE = bool(os.getenv("OIDC_ID_TOKEN_COOKIE_SECURE"))
 OIDC_REQUIRE_VERIFIED_EMAIL = bool(os.getenv("OIDC_REQUIRE_VERIFIED_EMAIL"))
 # OIDC_VALID_ISSUERS = None
-OIDC_OPENID_REALM = os.getenv("OIDC_OPENID_REALM")
+OIDC_OPENID_REALM = os.getenv(
+    "OIDC_OPENID_REALM"
+)  # or 'https://keycloak.fulltest.co/oidc_callback'
 # OIDC_CALLBACK_ROUTE = '/callback_oidc'
-OIDC_SCOPES = [
-    "openid",
-    "email",
-    "profile",
-    "roles",
-    "address",
-    "microprofile-jwt",
-    "phone",
-    "offline_access",
-]
-# OIDC_USER_INFO_ENABLED = True
+OIDC_SCOPES = ["openid", "email", "profile", "template:write", "template:read"]
+# --------------------------------
+# OIDC_USER_INFO_ENABLED=False breaks with invalid access token
+OIDC_USER_INFO_ENABLED = True
+# --------------------------------
+
+
+# --------------------------------
+# OIDC_RESOURCE_SERVER_ONLY=True breaks with:
+# - werkzeug.routing.BuildError: Could not build url for endpoint
+#   '_oidc_callback'. Did you mean 'dashboard' instead?
+# - appcontext does not have oidc_id_token attribute
+OIDC_RESOURCE_SERVER_ONLY = False
+# --------------------------------
+
+# OIDC_INTROSPECTION_AUTH_METHOD = "bearer"
 
 
 class dbconfig:

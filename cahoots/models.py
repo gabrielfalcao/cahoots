@@ -1,147 +1,114 @@
 import json
 import logging
-
-from datetime import datetime
-from chemist import Model, db, metadata, DefaultForeignKey
+from typing import Optional
+from uiclasses import Model as DataClass
+from chemist import Model, db, metadata
+from cahoots.utils import parse_jwt_token
 
 
 logger = logging.getLogger(__name__)
 
 
-def ensure_datetime(value):
-    if isinstance(value, str):
-        try:
-            value = int(value)
-        except (TypeError, ValueError):
-            logger.warning(
-                f"cannot convert timestamp to datetime: {value!r}. "
-                "Datetime will be NULL."
-            )
-            return None
-
-    if isinstance(value, (float, int)):
-        return datetime.fromtimestamp(value)
-
-    elif isinstance(value, datetime):
-        return value
-
-    return value
-
-
-class User(Model):
+class Template(Model):
     table = db.Table(
-        "user",
+        "templates",
         metadata,
         db.Column("id", db.Integer, primary_key=True),
-        db.Column("oauth2_id", db.UnicodeText, nullable=True, index=True),
-        db.Column("email", db.String(100), nullable=False, unique=True),
-        db.Column("name", db.String(255)),
-        db.Column("picture", db.UnicodeText),
-        db.Column("created_at", db.DateTime, default=datetime.utcnow),
-        db.Column("updated_at", db.DateTime, default=datetime.utcnow),
-        db.Column("extra_data", db.UnicodeText),
-    )
-
-    def to_dict(self):
-        data = self.serialize()
-        data.pop("extra_data", None)
-        data.update(self.extra_data)
-        return data
-
-    @property
-    def extra_data(self):
-        value = self.get("extra_data")
-        try:
-            return json.loads(value)
-        except json.JSONDecodeError as e:
-            logger.warning(f"{self}.extra_data is not a valid JSON")
-            return {"value": value, "error": str(e)}
-
-    def save(self, *args, **kw):
-        self.set(updated_at=datetime.utcnow())
-        return super().save(*args, **kw)
-
-    def add_token(
-        self,
-        id_token: str,
-        access_token: str,
-        expires_in: int = None,
-        expires_at: datetime = None,
-        scope: str = None,
-        token_type: str = None,
-        **extra_data,
-    ):
-        token = UserToken.get_or_create(user_id=self.id, id_token=id_token)
-        token.update_and_save(
-            access_token=access_token,
-            expires_at=ensure_datetime(expires_at),
-            expires_in=expires_in,
-            scope=scope,
-            token_type=token_type,
-            extra_data=json.dumps(extra_data, indent=4, default=str),
-        )
-        return token
-
-
-class UserToken(Model):
-    table = db.Table(
-        "user_tokens",
-        metadata,
-        db.Column("id", db.Integer, primary_key=True),
-        db.Column("id_token", db.UnicodeText, nullable=True),
-        db.Column("access_token", db.UnicodeText, nullable=True, index=True),
-        db.Column("expires_at", db.DateTime),
-        db.Column("expires_in", db.Integer),
-        db.Column("scope", db.Text),
-        db.Column("token_type", db.Text),
-        db.Column("extra_data", db.UnicodeText),
-        DefaultForeignKey("user_id", "user.id"),
+        db.Column("name", db.UnicodeText, nullable=True, index=True),
+        db.Column("content", db.UnicodeText, nullable=True),
     )
 
     @property
-    def user(self):
-        return User.find_one_by(id=self.user_id)
+    def content(self):
+        try:
+            return json.loads(self.get("content", "null"), default=str)
+        except Exception:
+            logger.exception(f"{self}.content property")
+            return self.get("content")
+
+
+class OpaqueJWT(DataClass):
+    opaque: str
+
+    def initialize(self, **kw):
+        self.__jwt__ = None
+
+    @property
+    def jwt(self) -> Optional[dict]:
+        if not self.__jwt__:
+            self.__jwt__ = parse_jwt_token(self.opaque, fallback={})
+
+        return self.__jwt__
+
+    @property
+    def sub(self):
+        return self.jwt.get('sub')
+
+    @property
+    def iss(self):
+        return self.jwt.get('iss')
+
+    @property
+    def type(self):
+        return self.jwt.get('typ') or 'unknown'
 
     @property
     def scope(self):
-        return self.get("scope", "").split()
-
-    @property
-    def extra_data(self):
-        value = self.get("extra_data")
-        try:
-            return json.loads(value)
-        except json.JSONDecodeError as e:
-            logger.warning(f"{self}.extra_data is not a valid JSON")
-            return {"value": value, "error": str(e)}
-
-    def to_dict(self):
-        data = self.serialize()
-        data.pop("extra_data", None)
-        data.pop("scope", None)
-        data.update(self.extra_data)
-        data["scope"] = self.scope
-        return data
+        return self.jwt.get('scope')
 
 
 class JWTToken(Model):
     table = db.Table(
-        "user_jwt_tokens",
+        "jwt_tokens",
         metadata,
         db.Column("id", db.Integer, primary_key=True),
-        db.Column("data", db.UnicodeText, nullable=True, index=True),
-        DefaultForeignKey("user_id", "user.id"),
+        db.Column("type", db.Unicode(100), nullable=True, index=True),
+        db.Column("opaque_data", db.UnicodeText, nullable=True),
+    )
+
+    @classmethod
+    def get_or_create_from_opaque_data(cls, data: str):
+        jwt = OpaqueJWT(opaque=data)
+        return cls.get_or_create_from_opaque_jwt(jwt)
+
+    @classmethod
+    def get_or_create_from_opaque_jwt(cls, jwt: OpaqueJWT):
+        return cls.get_or_create(opaque_data=jwt.opaque, type=jwt.type)
+
+
+class AdminRequest(Model):
+    table = db.Table(
+        "keycloak_admin_requests",
+        metadata,
+        db.Column("id", db.Integer, primary_key=True),
+        db.Column("method", db.Unicode(20), nullable=True, index=True),
+        db.Column("path", db.UnicodeText, nullable=True, index=True),
+        db.Column("jwt_token", db.UnicodeText, nullable=True),
+        db.Column("args", db.UnicodeText, nullable=True),
+        db.Column("data", db.UnicodeText, nullable=True),
+        db.Column("headers", db.UnicodeText, nullable=True),
     )
 
     @property
-    def user(self):
-        return User.find_one_by(id=self.user_id)
+    def args(self):
+        return json.loads(self.get("args", "{}"))
+
+    @property
+    def jwt_token(self):
+        return json.loads(self.get("jwt_token", "{}"))
 
     @property
     def data(self):
-        return json.loads(self.get("data", "null"))
+        return json.loads(self.get("data", "{}"))
 
-    def to_dict(self):
-        data = self.serialize()
-        data["data"] = self.data
-        return data
+    @property
+    def headers(self):
+        return json.loads(self.get("headers", "{}"))
+
+    # def to_dict(self):
+    #     data = self.serialize()
+    #     data["headers"] = self.headers
+    #     data["data"] = self.data
+    #     data["args"] = self.args
+    #     data["jwt_token"] = self.jwt_token
+    #     return data

@@ -3,8 +3,8 @@ name: 🐍 Python 3.7.5
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
+  # pull_request:
+  #   branches: [ master ]
 
 jobs:
   build:

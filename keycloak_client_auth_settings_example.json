@@ -1,0 +1,100 @@
+{
+  "allowRemoteResourceManagement": true,
+  "policyEnforcementMode": "PERMISSIVE",
+  "resources": [
+    {
+      "name": "PUT /api/v1/resume/<resume-id>",
+      "type": "resume",
+      "ownerManagedAccess": false,
+      "displayName": "Resume API v1 - Edit resume by id",
+      "attributes": {},
+      "_id": "161b0f43-2593-40db-9ec9-9d7dd9741e60",
+      "uris": [
+        "/api/v1/resume/*"
+      ],
+      "scopes": [
+        {
+          "name": "resume:write"
+        },
+        {
+          "name": "resume:edit"
+        },
+        {
+          "name": "resume:admin"
+        }
+      ]
+    },
+    {
+      "name": "POST /api/v1/resume",
+      "type": "resume",
+      "ownerManagedAccess": false,
+      "displayName": "Resume API v1 - Create Resume",
+      "attributes": {},
+      "_id": "6bb2b8bc-9125-4e65-acc3-5985600770f6",
+      "uris": [
+        "/api/v1/resume"
+      ],
+      "scopes": [
+        {
+          "name": "resume:write"
+        },
+        {
+          "name": "resume:create"
+        },
+        {
+          "name": "resume:admin"
+        }
+      ]
+    }
+  ],
+  "policies": [
+    {
+      "id": "f39aadc4-5d06-4856-8fbb-6d4ca8e7d2bd",
+      "name": "Default Policy",
+      "description": "A policy that grants access only for users within this realm",
+      "type": "js",
+      "logic": "POSITIVE",
+      "decisionStrategy": "AFFIRMATIVE",
+      "config": {
+        "code": "// by default, grants any permission associated with this policy\n$evaluation.grant();\n"
+      }
+    },
+    {
+      "id": "b30c22cf-673a-47cb-bdc4-418f01f5c464",
+      "name": "Create Posts V1",
+      "description": "Use consensus to allow resume creation as per API V1",
+      "type": "scope",
+      "logic": "POSITIVE",
+      "decisionStrategy": "CONSENSUS",
+      "config": {
+        "resources": "[\"POST /api/v1/resume\"]",
+        "scopes": "[\"resume:write\",\"resume:create\",\"resume:admin\"]",
+        "applyPolicies": "[\"Default Policy\"]"
+      }
+    }
+  ],
+  "scopes": [
+    {
+      "id": "f7e5e9fc-6fc1-47f3-959f-84e4e850f0fc",
+      "name": "resume:list",
+      "displayName": "Permission to list resumes"
+    },
+    {
+      "id": "4fbf828b-db40-406d-8a59-3999a7334dd0",
+      "name": "resume:edit"
+    },
+    {
+      "id": "455252cb-d466-4ce3-8c66-a4835728c75b",
+      "name": "resume:write"
+    },
+    {
+      "id": "f5646b6d-4d72-4fc8-9ae7-7ce8f3b5380e",
+      "name": "resume:create"
+    },
+    {
+      "id": "0df476dd-fa3c-4417-bde6-3a48f69f9f8b",
+      "name": "resume:admin"
+    }
+  ],
+  "decisionStrategy": "AFFIRMATIVE"
+}

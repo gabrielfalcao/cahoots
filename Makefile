@@ -1,4 +1,4 @@
-.PHONY: tests all unit functional run docker-image docker-push docker migrate db deploy deploy-with-helm port-forward wheels docker-base-image redeploy check docker-pull clean
+.PHONY: tests all unit functional run docker-image docker-push docker migrate db deploy deploy-with-helm port-forward wheels docker-base-image redeploy check docker-pull clean purge-sessions
 
 GIT_ROOT		:= $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 VENV_ROOT		:= $(GIT_ROOT)/.venv
@@ -6,16 +6,16 @@ export VENV		?= $(VENV_ROOT)
 export FLASK_DEBUG	:= 1
 export HTTPS_API	?= $(shell ps aux | grep ngrok | grep -v grep)
 
-export OAUTH2_ACCESS_TOKEN_URL	:= https://id.t.newstore.net/realms/gabriel-NA-43928/protocol/openid-connect/token
-export OAUTH2_AUTHORIZE_URL	:= https://id.t.newstore.net/realms/gabriel-NA-43928/protocol/openid-connect/auth
-export OAUTH2_BASE_URL		:= https://id.t.newstore.net/realms/gabriel-NA-43928/protocol/openid-connect/
+export OAUTH2_ACCESS_TOKEN_URL	:= https://id.t.newstore.net/auth/realms/gabriel-NA-43928/protocol/openid-connect/token
+export OAUTH2_AUTHORIZE_URL	:= https://id.t.newstore.net/auth/realms/gabriel-NA-43928/protocol/openid-connect/auth
+export OAUTH2_BASE_URL		:= https://id.t.newstore.net/auth/realms/gabriel-NA-43928/protocol/openid-connect/
 export OAUTH2_CALLBACK_URL	:= https://keycloak.fulltest.co/callback/oauth2
-export OAUTH2_CLIENT_ID		:= keycloak-fulltest-co-1
-export OAUTH2_CLIENT_SCOPE	:= openid profile email roles
-export OAUTH2_CLIENT_SECRET	:= b369944a-272d-40fa-a427-17e5387fde7e
+export OAUTH2_CLIENT_ID		:= fake-newstore-api-v1
+export OAUTH2_CLIENT_SCOPE	:= openid profile email
+export OAUTH2_CLIENT_SECRET	:= da341d0c-eaa4-460b-af6b-dac5de6443b5
 export OAUTH2_DOMAIN		:= id.t.newstore.net
 export OAUTH2_CLIENT_AUDIENCE	:= https://keycloak.fulltest.co/
-
+export SECRET_KEY		:= $(shell 2>/dev/null dd bs=128 count=1 if=/dev/urandom | base64 | head -1)
 
 DEPLOY_TIMEOUT		:= 300
 # NOTE: the sha must be the long version to match the ${{ github.sha
@@ -26,7 +26,7 @@ PROD_TAG		:= $(shell git log --pretty="format:%H" -n1 . | tail -1)
 DOCKER_AUTHOR		:= gabrielfalcao
 BASE_IMAGE		:= cahoots-in-base
 PROD_IMAGE		:= k8s-cahoots-in
-HELM_SET_VARS		:= --set image.tag=$(PROD_TAG) --set image.repository=$(DOCKER_AUTHOR)/$(PROD_IMAGE) --set oauth2.client_id=$(OAUTH2_CLIENT_ID) --set oauth2.client_secret=$(OAUTH2_CLIENT_SECRET)
+HELM_SET_VARS		:= --set image.tag=$(PROD_TAG) --set image.repository=$(DOCKER_AUTHOR)/$(PROD_IMAGE) --set oauth2.client_id=$(OAUTH2_CLIENT_ID) --set oauth2.client_secret=$(OAUTH2_CLIENT_SECRET) --set flask.secret_key=$(SECRET_KEY)-$(PROD_TAG)
 NAMESPACE		:= in-cahoots
 HELM_RELEASE		:= $(NAMESPACE)-v0
 FIGLET			:= $(shell which figlet)
@@ -66,7 +66,7 @@ functional:| $(VENV)/bin/nosetests  # runs functional tests
 	$(VENV)/bin/nosetests tests/functional
 
 # runs the server, exposing the routes to http://localhost:5000
-run: | $(VENV)/bin/python
+run: purge-sessions | $(VENV)/bin/python
 	$(VENV)/bin/cahoots-in web --port=5000
 
 
@@ -107,7 +107,7 @@ port-forward:
 forward-queue-port:
 	kubepfm --target "$(NAMESPACE):.*queue:4242:4242"
 
-db: | $(VENV)/bin/cahoots-in
+db: purge-sessions | $(VENV)/bin/cahoots-in
 	-@2>/dev/null dropdb cahoots_in || echo ''
 	-@2>/dev/null dropuser cahoots_in || echo 'no db user'
 	-@2>/dev/null createuser cahoots_in --createrole --createdb
@@ -116,11 +116,15 @@ db: | $(VENV)/bin/cahoots-in
 	-@psql postgres << "GRANT ALL PRIVILEGES ON DATABASE cahoots_in TO cahoots_in;"
 	$(VENV)/bin/cahoots-in migrate-db
 
+purge-sessions:
+	$(VENV)/bin/cahoots-in purge-sessions
+
+
 template:
 	helm dependency update --skip-refresh operations/helm/
 	helm template $(HELM_SET_VARS) operations/helm
 
-deploy: k8s-namespace
+deploy: tests k8s-namespace
 	iterm2 color orange
 	helm template $(HELM_SET_VARS) operations/helm > /dev/null
 	git push
@@ -170,7 +174,10 @@ setup-helm:
 
 
 tunnel:
-	ngrok http --subdomain=pron-f1l3-serv3r 5000
+	ngrok http --subdomain=keycloak-fulltestco 5000
+
+tunnel-react:
+	ngrok http --subdomain=reactkeycloak 3000
 
 clean:
 	rm -rf .venv
@@ -182,6 +189,8 @@ react-app: frontend/build/index.html
 	cp -f frontend/build/index.html cahoots/web/templates/index.html
 	rm -rf cahoots/web/static/{js,css}
 	rsync -putaoz frontend/build/static/ cahoots/web/static/
+	rsync -putaoz frontend/build/ cahoots/web/static/
+	rm -rf cahoots/web/static/static
 	rm -f frontend/build/index.html
 
 # https://cert-manager.io/docs/tutorials/backup/

@@ -1,6 +1,7 @@
-PyJWT>=1.7.1
+Flask-OIDC>=1.4.0
+PyJWT==1.7.1
 agentzero==0.4.4
-authlib==0.14.2
+alembic==1.4.2
 bcrypt==3.1.7
 chemist==1.6.3
 click==7.1.2
@@ -18,4 +19,5 @@ pyzmq==18.0.1
 redis==3.5.1
 requests==2.23.0
 uiclasses==2.2.1
+vcrpy==4.0.2
 werkzeug==0.16.1

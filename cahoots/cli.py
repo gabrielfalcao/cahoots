@@ -7,6 +7,7 @@ import socket
 import click
 import logging
 import zmq
+from pathlib import Path
 from datetime import datetime
 from zmq.devices import Device
 from chemist import set_default_uri
@@ -14,6 +15,7 @@ from chemist import set_default_uri
 # import from cahoots.api to cascade all route declarations
 from cahoots.web import application
 
+from cahoots import config
 from cahoots.config import dbconfig
 from cahoots.models import metadata
 from cahoots.worker.client import EchoClient
@@ -100,6 +102,17 @@ def main(ctx, loglevel):
 def print_version():
     "prints the version to the STDOUT"
     print(f"cahoots-in {version} / {sys.platform}")
+
+
+@main.command(name="purge-sessions")
+def purge_session():
+    if config.SESSION_TYPE == "filesystem":
+        path = Path(config.SESSION_FILE_DIR)
+        for path in path.glob("*"):
+            path.unlink()
+            print(f"deleted {path}")
+    else:
+        print("cannot purge session type {config.SESSION_TYPE}")
 
 
 @main.command("check")

@@ -16,6 +16,26 @@ spec:
         app.kubernetes.io/name: {{ include "cahoots-in.name" . }}-web
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
+      affinity:
+        # kubernetes.io/hostname=pool-callosum-3ubm3
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - pool-callosum-3ubm3
+
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - pool-callosum-3ubm3
+
       initContainers:
       - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -51,6 +71,14 @@ spec:
         - name: DOCKER_IMAGE
           value: {{ .Values.image.tag }}
 
+      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        name: purge-sessions
+        command: ['/venv/bin/cahoots-in', 'purge-sessions']
+        envFrom:
+          - configMapRef:
+              name: {{ include "cahoots-in.fullname" . }}-env
+
       volumes:
         - name: cahoots-uploads-volume
           persistentVolumeClaim:
@@ -59,7 +87,7 @@ spec:
       containers:
       - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
-        name: {{ .Chart.Name }}
+        name: {{ .Chart.Name }}-web-application-server
         command: ['/venv/bin/cahoots-in', 'web']
         livenessProbe:
           httpGet:

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block container %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-10">
+      {% if session['id_token'] %}
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h3 class="panel-title">ID Token</h3>
+        </div>
+        <div class="panel-body">
+          <pre>{{ session['id_token'] or {"error": "`id_token` missing from session"} | tojson(indent=4) }}</pre>
+        </div>
+      </div>
+      {% else %}
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          <h3 class="panel-title">Not logged in</h3>
+        </div>
+        <div class="panel-body">
+          <p>Browse the <a href="/api/">API</a> or <a href="{{ url_for('login_oauth2') }}">authenticate with keycloak.</a></p>
+          <p>In case of problems with your session, just <a href="{{ url_for('logout') }}">logout</a> to force-flush the cookies.</p>
+        </div>
+      </div>
+      {% endif  %}
+      {% if session['id_token'] %}
+      <div class="panel panel-success">
+        <div class="panel-heading">
+          <h3 class="panel-title">Access Token (Bearer)</h3>
+        </div>
+        <div class="panel-body">
+          <pre>{{ session.access_token }}</pre>
+          <pre>{{ g.access_token | tojson(indent=4) }}</pre>
+          <ul class="list-group">
+            <li class="list-group-item active">Scopes Included in Access Token</li>
+
+            {% for scope in g.access_token.get("scope", "").split() %}
+            <li class="list-group-item"><pre>{{ scope }}</pre></li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      <div class="panel panel-warning">
+        <div class="panel-heading">
+          <h3 class="panel-title">Refresh Token</h3>
+        </div>
+        <div class="panel-body">
+          <pre>{{ session.refresh_token }}</pre>
+          <pre>{{ g.refresh_token | tojson(indent=4) }}</pre>
+          <ul class="list-group">
+            <li class="list-group-item active">Scopes Included in Refresh Token</li>
+
+            {% for scope in g.refresh_token.get("scope", "").split() %}
+            <li class="list-group-item"><pre>{{ scope }}</pre></li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

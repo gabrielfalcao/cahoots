@@ -10,11 +10,13 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "strict": true,
+    "strict": false,
     "outDir": "./lib",                        /* Redirect output structure to the directory. */
     "forceConsistentCasingInFileNames": true,
     "module": "esnext",
-    "moduleResolution": "node",
+      "moduleResolution": "node",
+          "noImplicitAny": true,
+
     "resolveJsonModule": true,
     "rootDir": "./src",                       /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
     "isolatedModules": true,

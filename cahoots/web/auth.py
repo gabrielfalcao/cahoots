@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
-import jwt
-# import json
+import json
 import logging
-from typing import List
-from functools import wraps
 
-from flask import redirect, session, render_template, request, g, url_for
+from flask import redirect, session, request, g, url_for, make_response
+from cahoots.models import AdminRequest, JWTToken, OpaqueJWT
+from cahoots.utils import json_response, parse_jwt_token
 
-# from cahoots.models import JWTToken
-from . import db
-from .core import application
-from .core import oauth2
+from cahoots.web.core import application
+from cahoots.web.core import oidc
 
 
 logger = logging.getLogger(__name__)
+
+AUTH_SESSION_KEYS = {"access_token", "refresh_token"}
 
 
 @application.context_processor
@@ -30,83 +29,66 @@ def inject_user_when_present():
     return dict(user=user)
 
 
+@application.before_request
+def set_global_vars(tokens: dict = None):
+    tokens = tokens or session
+
+    # id_token is the only dict, access_token and refresh_token are an
+    # opaque JWT
+    g.id_token = tokens.get('id_token') or {}
+    for key in AUTH_SESSION_KEYS:
+        opaque = tokens.get(key)
+        if not opaque:
+            continue
+
+        jwt = OpaqueJWT(opaque=opaque)
+        model = JWTToken.get_or_create_from_opaque_jwt(jwt)
+        setattr(g, key, jwt.jwt)
+
+
 @application.route("/login/oauth2")
+@oidc.require_login
 def login_oauth2():
-    params = {}
-    idp = request.args.get('idp')
-    if idp == 'azure':
-        params['kc_idp_hint'] = 'newstore-azure-ad'
+    id_token = oidc.get_cookie_id_token()
+    access_token = oidc.get_access_token()
+    refresh_token = oidc.get_refresh_token()
+    tokens = locals()
 
-    return oauth2.authorize_redirect(
-        redirect_uri=application.config["OAUTH2_CALLBACK_URL"],
-        audience=application.config["OAUTH2_CLIENT_AUDIENCE"] or None,
-        **params
+    session.update(tokens)
+    set_global_vars(tokens)
+    return redirect("/")
+
+
+@application.route("/auth/admin", methods=["GET", "POST"])
+@application.route("/auth/admin/<path:path>", methods=["GET", "POST"])
+def auth_admin_push_revokation(path=""):
+    logger.info(f"Keycloak sent {request.method}: {request.path}")
+    logger.info(f"Keycloak sent {json.dumps(request.headers, indent=4, default=str)}")
+    logger.info(f"Keycloak sent args: {request.args!r}")
+    logger.info(f"Keycloak sent data {request.data!r}")
+    jwt_token = parse_jwt_token(request.data)
+    record = AdminRequest.create(
+        **{
+            "path": request.path,
+            "method": request.method,
+            "args": json.dumps(request.args, default=str),
+            "data": json.dumps(request.data, default=str),
+            "jwt_token": json.dumps(jwt_token, default=str),
+            "headers": json.dumps(request.headers, default=str),
+        }
     )
-
-
-@application.route("/callback/oauth2")
-def oauth2_callback():
-
-    # Handles response from token endpoint
-    try:
-        token = oauth2.authorize_access_token()
-    except Exception as e:
-        return render_template(
-            "error.html",
-            exception="Failed to retrieve OAuth2 userinfo",
-            message=str(e),
-            args=dict(request.args),
-        )
-
-    response = oauth2.get("userinfo")
-
-    userinfo = response.json()
-
-    encoded_jwt_token = token.get("access_token")
-    encoded_id_token = token.get("id_token")
-    jwt_token = jwt.decode(encoded_jwt_token, verify=False)
-    id_token = jwt.decode(encoded_id_token, verify=False)
-
-    session["oauth2_id"] = userinfo.get("sub")
-    userinfo["jwt_token"] = jwt_token
-    session["token"] = token
-    session["access_token"] = encoded_jwt_token
-    session["id_token"] = id_token
-    session["jwt_token"] = jwt_token
-
-    user, token = db.get_user_and_token_from_userinfo(
-        token=token,
-        userinfo=userinfo,
-    )
-    session["user"] = user.to_dict()
-    session["token"] = token.to_dict()
-
-    return redirect("/dashboard")
+    return json_response(record.to_dict())
 
 
 def is_authenticated():
-    auth_keys = {"user", "access_token", "token", "id_token", "jwt_token"}
-    return auth_keys.intersection(set(session.keys()))
-
-
-def require_oauth2(permissions: List[str]):
-    def wrapper(f):
-        @wraps(f)
-        def decorated(*args, **kwargs):
-            if not is_authenticated():
-                # Redirect to Login page here
-                return redirect(url_for("login_oauth2"))
-
-            # TODO: check if roles match
-            return f(*args, **kwargs)
-
-        return decorated
-
-    return wrapper
+    return AUTH_SESSION_KEYS.intersection(set(session.keys()))
 
 
 @application.route("/logout")
 def logout():
-    # Clear session stored data
+    response = make_response(redirect(request.args.get("next") or url_for("index")))
+    response.delete_cookie("session")
+    response.delete_cookie("oidc_id_token")
+    oidc.logout()
     session.clear()
-    return redirect(request.args.get('next') or url_for("index"))
+    return response

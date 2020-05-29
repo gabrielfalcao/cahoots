@@ -35,3 +35,12 @@ spec:
     volumeHandle: 101187de-45d7-11e8-9b2b-0242ac116704
     volumeAttributes:
       com.digitalocean.csi/noformat: "true"
+
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - pool-callosum-3ubm3
