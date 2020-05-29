@@ -1,16 +1,20 @@
 FROM node:12.16.1-alpine
 
-RUN npm install --silent -g typescript react-scripts create-react-app
-RUN npm install --silent -g npm eslint yarn
 
-WORKDIR /usr/src/app
+# set working directory
+WORKDIR /app
 
-COPY package.json .
+# add `/app/node_modules/.bin` to $PATH
+ENV PATH /app/node_modules/.bin:$PATH
+
+# install app dependencies
+COPY package.json ./
+COPY package-lock.json ./
 RUN npm install --silent
+RUN npm install --silent -g react-scripts@3.4.1
 
-ADD . /usr/src/app
+# add app
+COPY . ./
 
-RUN npm run build
-
-CMD [ "npm", "start" ]
-EXPOSE 3000
+# start app
+CMD ["npm", "start"]
