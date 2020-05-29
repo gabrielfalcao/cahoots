@@ -31,17 +31,13 @@ export class AuthService {
         Log.level = Log.INFO;
     }
 
-    public getUser(): Promise<User | null> {
-        return this.userManager.getUser();
-    }
-
     public login(): Promise<void> {
         return this.userManager.signinRedirect();
     }
 
-    public renewToken(): Promise<User> {
-        return this.userManager.signinSilent();
-    }
+    // public renewToken(): Promise<User> {
+    //     return this.userManager.signinSilent();
+    // }
 
     public logout(): Promise<void> {
         return this.userManager.signoutRedirect();

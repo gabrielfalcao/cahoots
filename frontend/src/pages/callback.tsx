@@ -3,10 +3,10 @@ import { connect } from "react-redux";
 
 import { Redirect } from "react-router-dom";
 import Container from "react-bootstrap/Container";
-import * as toastr from "toastr";
-
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+// import * as toastr from "toastr";
+
 import Spinner from "react-bootstrap/Spinner";
 import { AuthService } from "../auth";
 
@@ -31,34 +31,33 @@ class OAuth2Callback extends Component<CallbackProps, CallbackState> {
         this.authService
             .handleCallback()
             .then(user => {
-                this.setState({ user });
                 this.props.setUser(user);
-                console.log("callback user", user);
-                toastr.info(`callback succeedded`);
             })
             .catch(error => {
-                toastr.error(error);
+                console.log(error);
             });
     }
 
     render() {
-        const { user } = this.state;
-        console.log(user);
-        if (user !== null) {
+        const { auth }: any = this.props;
+        if (auth.profile) {
             return <Redirect to="/" />;
         }
 
         return (
-            <Container>
-                <Row>
-                    <Col>
-                        <br />
-                        <br />
-                        <br />
-                        <br />
+            <Container fluid="md">
+                <br />
+                <br />
+                <br />
+                <br />
 
+                <Row className="justify-content-md-center">
+                    <Col md={6}>
+                        <p>redirecting...</p>
                         <Spinner animation="border" role="status">
-                            <span className="sr-only">Loading...</span>
+                            <span className="sr-only">
+                                login authorized, you are being redirected
+							</span>
                         </Spinner>
                     </Col>
                 </Row>
@@ -67,15 +66,16 @@ class OAuth2Callback extends Component<CallbackProps, CallbackState> {
     }
 }
 
-function setUser(user: any) {
-    return {
-        type: "NEW_AUTHENTICATION",
-        user
-    };
-}
 export default connect(
     state => {
         return { ...state };
     },
-    { setUser }
+    {
+        setUser: function(user: any) {
+            return {
+                type: "NEW_AUTHENTICATION",
+                user
+            };
+        }
+    }
 )(OAuth2Callback);

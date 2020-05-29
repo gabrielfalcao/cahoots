@@ -4,7 +4,7 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { Provider } from "react-redux";
 
-import "bootswatch/dist/cosmo/bootstrap.min.css";
+import "bootswatch/dist/lux/bootstrap.min.css";
 import store from "./store";
 
 ReactDOM.render(

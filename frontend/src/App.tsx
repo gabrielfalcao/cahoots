@@ -14,7 +14,8 @@ import { LinkContainer } from "react-router-bootstrap";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 
-import Home from "./pages/home";
+import ProfilePage from "./pages/home";
+import TemplateAdmin from "./pages/TemplateAdmin";
 import OAuth2Callback from "./pages/callback";
 import Login from "./pages/login";
 import Logout from "./pages/logout";
@@ -89,9 +90,14 @@ class App extends Component<AppProps, AppState> {
                                 </LinkContainer>
                             ) : (
                                     <React.Fragment>
-                                        <LinkContainer to="/">
+                                        <LinkContainer to="/profile">
                                             <Nav.Link>Home</Nav.Link>
                                         </LinkContainer>
+
+                                        <LinkContainer to="/admin">
+                                            <Nav.Link>Template API Admin</Nav.Link>
+                                        </LinkContainer>
+
                                         <Nav.Link href="/api">
                                             Fake NewStore API v1
 									</Nav.Link>
@@ -114,8 +120,14 @@ class App extends Component<AppProps, AppState> {
                     <Route path="/logout">
                         <Logout />
                     </Route>
-                    <AuthenticatedRoute path="/">
-                        <Home />
+                    <Route exact path="/">
+                        <Redirect to="/admin" />
+                    </Route>
+                    <AuthenticatedRoute path="/profile">
+                        <ProfilePage />
+                    </AuthenticatedRoute>
+                    <AuthenticatedRoute path="/admin">
+                        <TemplateAdmin />
                     </AuthenticatedRoute>
                 </Switch>
             </Router>

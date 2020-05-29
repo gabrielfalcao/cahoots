@@ -4,6 +4,7 @@ import PropTypes, { InferProps } from "prop-types";
 import Container from "react-bootstrap/Container";
 // import * as toastr from "toastr";
 import { Redirect } from "react-router-dom";
+import { LinkContainer } from "react-router-bootstrap";
 
 import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
@@ -37,11 +38,12 @@ class Login extends Component<{}, any> {
 
     public login = () => {
         this.authService.login();
+        //
     };
 
     render() {
-        const { auth }: InferProps<typeof Login.propTypes> = this.props;
-        if (auth.profile) {
+        const { auth }: any = this.props;
+        if (auth.access_token) {
             return <Redirect to="/" />;
         }
         return (
@@ -50,9 +52,7 @@ class Login extends Component<{}, any> {
                     <Col md={12}>
                         <Modal.Dialog>
                             <Modal.Header>
-                                <Modal.Title>
-                                    You will be taken to KeyCloak
-								</Modal.Title>
+                                <Modal.Title>Login with KeyCloak</Modal.Title>
                             </Modal.Header>
 
                             <Modal.Body>
@@ -68,7 +68,11 @@ class Login extends Component<{}, any> {
                             </Modal.Body>
 
                             <Modal.Footer>
-                                <Button onClick={this.login} variant="primary">
+                                <LinkContainer to="/logout">
+                                    <Button variant="primary">Logout</Button>
+                                </LinkContainer>
+
+                                <Button onClick={this.login} variant="success">
                                     Proceed
 								</Button>
                             </Modal.Footer>
