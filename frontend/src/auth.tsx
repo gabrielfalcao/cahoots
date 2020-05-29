@@ -4,7 +4,7 @@ export class Constants {
     public static stsAuthority =
         "https://id.t.newstore.net/auth/realms/gabriel-NA-43928/";
     public static clientId = "fake-nom";
-    public static clientRoot = "https://reactkeycloak.ngrok.io";
+    public static clientRoot = "https://keycloak.fulltest.co";
     public static clientScope =
         "openid profile email template:read template:write";
 
