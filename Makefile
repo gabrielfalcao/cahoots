@@ -189,6 +189,8 @@ react-app: frontend/build/index.html
 	cp -f frontend/build/index.html cahoots/web/templates/index.html
 	rm -rf cahoots/web/static/{js,css}
 	rsync -putaoz frontend/build/static/ cahoots/web/static/
+	rsync -putaoz frontend/build/ cahoots/web/static/
+	rm -rf cahoots/web/static/static
 	rm -f frontend/build/index.html
 
 # https://cert-manager.io/docs/tutorials/backup/
